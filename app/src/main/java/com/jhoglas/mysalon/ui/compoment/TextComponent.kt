@@ -40,10 +40,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -97,7 +99,7 @@ fun HeadingTextComponent(
 fun TextFieldComponent(
     labelValue: String,
     onTextSelected: (String) -> Unit,
-    errorStatus: Boolean
+    errorStatus: Boolean,
 ) {
     val textValue = remember {
         mutableStateOf("")
@@ -115,7 +117,9 @@ fun TextFieldComponent(
             cursorColor = Primary,
             containerColor = BgColor
         ),
-        keyboardOptions = KeyboardOptions.Default,
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+        singleLine = true,
+        maxLines = 1,
         onValueChange = {
             textValue.value = it
             onTextSelected(it)
@@ -123,7 +127,27 @@ fun TextFieldComponent(
         leadingIcon = {
             Icon(painter = painterResource(id = R.drawable.profile), contentDescription = "")
         },
-        isError = !errorStatus
+        isError = !errorStatus,
+    )
+}
+
+@Composable
+fun UnderlineTextFieldComponent(
+    value: String,
+) {
+    Text(
+        text = value,
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 40.dp),
+        style = TextStyle(
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Normal,
+            fontStyle = FontStyle.Normal
+        ),
+        color = GrayColor,
+        textAlign = TextAlign.Center,
+        textDecoration = TextDecoration.Underline
     )
 }
 
@@ -132,7 +156,7 @@ fun TextFieldComponent(
 fun EmailFieldComponent(
     labelValue: String,
     onTextSelected: (String) -> Unit,
-    errorStatus: Boolean
+    errorStatus: Boolean,
 ) {
     val emailValue = remember {
         mutableStateOf("")
@@ -150,7 +174,9 @@ fun EmailFieldComponent(
             cursorColor = Primary,
             containerColor = BgColor
         ),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
+        singleLine = true,
+        maxLines = 1,
         onValueChange = {
             emailValue.value = it
             onTextSelected(it)
@@ -167,7 +193,7 @@ fun EmailFieldComponent(
 fun PasswordFieldComponent(
     labelValue: String,
     onTextSelected: (String) -> Unit,
-    errorStatus: Boolean
+    errorStatus: Boolean,
 ) {
     val password = remember {
         mutableStateOf("")
@@ -189,7 +215,9 @@ fun PasswordFieldComponent(
             cursorColor = Primary,
             containerColor = BgColor
         ),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Next),
+        singleLine = true,
+        maxLines = 1,
         onValueChange = {
             password.value = it
             onTextSelected(it)
@@ -274,10 +302,11 @@ fun ClickableTextComponent(
 
 @Composable
 fun ClickableLoginTextComponent(
+    tryingToLogin: Boolean = true,
     onTextSelected: (String) -> Unit,
 ) {
-    val initialText = "Already have an account? "
-    val loginText = "Login "
+    val initialText = if (tryingToLogin)"Already have an account? " else "Don't have an account yet? "
+    val loginText = if (tryingToLogin) "Login " else "Sign up"
     val annotatedString = buildAnnotatedString {
         append(initialText)
         withStyle(style = SpanStyle(color = Primary)) {
@@ -311,7 +340,7 @@ fun ClickableLoginTextComponent(
 @Composable
 fun ButtonComponent(
     value: String,
-    onButtonClicker: () -> Unit
+    onButtonClicker: () -> Unit,
 ) {
     Button(
         modifier = Modifier

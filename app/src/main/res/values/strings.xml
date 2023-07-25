@@ -15,6 +15,7 @@
     <string name="terms_and_conditions_header">Term of Use</string>
     <string name="register">Register</string>
     <string name="login">Login</string>
+    <string name="welcome_back">Welcome Back</string>
     <string name="or">OR</string>
 
     <string name="go_to_login">Already have an account? Login</string>

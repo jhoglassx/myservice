@@ -77,7 +77,7 @@ fun RegisterScreen(loginViewModel: LoginViewModel = viewModel()) {
             CheckboxComponent(
                 onTextSelected = {
                     AppRouter.navigateTo(
-                        Screen.TermsAndConditions
+                        Screen.TermsAndConditionsScreen
                     )
                 }
             )
@@ -90,7 +90,7 @@ fun RegisterScreen(loginViewModel: LoginViewModel = viewModel()) {
             )
             DividerComponent()
             ClickableLoginTextComponent(onTextSelected = {
-                AppRouter.navigateTo(Screen.Login)
+                AppRouter.navigateTo(Screen.LoginScreen)
             })
         }
     }

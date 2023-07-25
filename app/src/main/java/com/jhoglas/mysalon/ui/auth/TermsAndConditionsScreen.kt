@@ -17,7 +17,7 @@ import com.jhoglas.mysalon.ui.navigation.Screen
 import com.jhoglas.mysalon.ui.navigation.SystemBackButtonHandler
 
 @Composable
-fun TermsAndConditions() {
+fun TermsAndConditionsScreen() {
     Surface(
         Modifier
             .fillMaxSize()
@@ -26,7 +26,7 @@ fun TermsAndConditions() {
     ) {
         HeadingTextComponent(value = stringResource(id = R.string.terms_and_conditions_header))
         SystemBackButtonHandler {
-            AppRouter.navigateTo(Screen.Register)
+            AppRouter.navigateTo(Screen.RegisterScreen)
         }
     }
 }
@@ -34,5 +34,5 @@ fun TermsAndConditions() {
 @Preview
 @Composable
 fun TermsAndConditionsPreview() {
-    TermsAndConditions()
+    TermsAndConditionsScreen()
 }

@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.jhoglas.mysalon.ui.auth.LoginScreen
 import com.jhoglas.mysalon.ui.auth.RegisterScreen
-import com.jhoglas.mysalon.ui.auth.TermsAndConditions
+import com.jhoglas.mysalon.ui.auth.TermsAndConditionsScreen
 import com.jhoglas.mysalon.ui.navigation.AppRouter
 import com.jhoglas.mysalon.ui.navigation.Screen
 import com.jhoglas.mysalon.ui.theme.MySalonTheme
@@ -30,9 +30,9 @@ class MainActivity : ComponentActivity() {
                 ) {
                     Crossfade(targetState = AppRouter.currentScreen) { currentState ->
                         when (currentState.value) {
-                            is Screen.Register -> RegisterScreen()
-                            is Screen.TermsAndConditions -> TermsAndConditions()
-                            is Screen.Login -> LoginScreen()
+                            is Screen.RegisterScreen -> RegisterScreen()
+                            is Screen.TermsAndConditionsScreen -> TermsAndConditionsScreen()
+                            is Screen.LoginScreen -> LoginScreen()
                         }
                     }
                 }
