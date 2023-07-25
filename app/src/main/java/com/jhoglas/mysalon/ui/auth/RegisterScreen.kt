@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jhoglas.mysalon.R
 import com.jhoglas.mysalon.ui.compoment.ButtonComponent
 import com.jhoglas.mysalon.ui.compoment.CheckboxComponent
@@ -27,8 +28,7 @@ import com.jhoglas.mysalon.ui.navigation.AppRouter
 import com.jhoglas.mysalon.ui.navigation.Screen
 
 @Composable
-fun Register() {
-    // A surface container using the 'background' color from the theme
+fun RegisterScreen(loginViewModel: LoginViewModel = viewModel()) {
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -42,14 +42,38 @@ fun Register() {
             NormalTextComponent(stringResource(id = R.string.hey_there))
             HeadingTextComponent(stringResource(id = R.string.create_account))
             Spacer(modifier = Modifier.height(20.dp))
-            TextFieldComponent(stringResource(id = R.string.first_name))
-            TextFieldComponent(stringResource(id = R.string.last_name))
-            Spacer(modifier = Modifier.height(20.dp))
-            EmailFieldComponent(stringResource(id = R.string.email))
-            //EmailFieldComponent(stringResource(id = R.string.re_email))
-            Spacer(modifier = Modifier.height(20.dp))
-            PasswordFieldComponent(stringResource(id = R.string.password))
-            //PasswordFieldComponent(stringResource(id = R.string.re_password))
+            TextFieldComponent(
+                stringResource(id = R.string.first_name),
+                onTextSelected = {
+                    loginViewModel.onEvent(AuthUIEvent.FirstNameChange(it))
+                },
+                errorStatus = loginViewModel.authUIState.value.firstNameError
+            )
+            TextFieldComponent(
+                stringResource(id = R.string.last_name),
+                onTextSelected = {
+                    loginViewModel.onEvent(AuthUIEvent.LastNameChange(it))
+                },
+                errorStatus = loginViewModel.authUIState.value.lastNameError
+            )
+            // Spacer(modifier = Modifier.height(20.dp))
+            EmailFieldComponent(
+                stringResource(id = R.string.email),
+                onTextSelected = {
+                    loginViewModel.onEvent(AuthUIEvent.EmailChange(it))
+                },
+                errorStatus = loginViewModel.authUIState.value.emailError
+            )
+            // EmailFieldComponent(stringResource(id = R.string.re_email))
+            // Spacer(modifier = Modifier.height(20.dp))
+            PasswordFieldComponent(
+                stringResource(id = R.string.password),
+                onTextSelected = {
+                    loginViewModel.onEvent(AuthUIEvent.PasswordChange(it))
+                },
+                errorStatus = loginViewModel.authUIState.value.passwordError
+            )
+            // PasswordFieldComponent(stringResource(id = R.string.re_password))
             CheckboxComponent(
                 onTextSelected = {
                     AppRouter.navigateTo(
@@ -58,7 +82,12 @@ fun Register() {
                 }
             )
             Spacer(modifier = Modifier.height(20.dp))
-            ButtonComponent(value = stringResource(id = R.string.register))
+            ButtonComponent(
+                value = stringResource(id = R.string.register),
+                onButtonClicker = {
+                    loginViewModel.onEvent(AuthUIEvent.RegisterButtonClick)
+                }
+            )
             DividerComponent()
             ClickableLoginTextComponent(onTextSelected = {
                 AppRouter.navigateTo(Screen.Login)
@@ -70,5 +99,5 @@ fun Register() {
 @Preview
 @Composable
 fun RegisterPreview() {
-    Register()
+    RegisterScreen()
 }

@@ -96,6 +96,8 @@ fun HeadingTextComponent(
 @Composable
 fun TextFieldComponent(
     labelValue: String,
+    onTextSelected: (String) -> Unit,
+    errorStatus: Boolean
 ) {
     val textValue = remember {
         mutableStateOf("")
@@ -116,10 +118,12 @@ fun TextFieldComponent(
         keyboardOptions = KeyboardOptions.Default,
         onValueChange = {
             textValue.value = it
+            onTextSelected(it)
         },
         leadingIcon = {
             Icon(painter = painterResource(id = R.drawable.profile), contentDescription = "")
-        }
+        },
+        isError = !errorStatus
     )
 }
 
@@ -127,6 +131,8 @@ fun TextFieldComponent(
 @Composable
 fun EmailFieldComponent(
     labelValue: String,
+    onTextSelected: (String) -> Unit,
+    errorStatus: Boolean
 ) {
     val emailValue = remember {
         mutableStateOf("")
@@ -147,10 +153,12 @@ fun EmailFieldComponent(
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
         onValueChange = {
             emailValue.value = it
+            onTextSelected(it)
         },
         leadingIcon = {
             Icon(painter = painterResource(id = R.drawable.email), contentDescription = "")
-        }
+        },
+        isError = !errorStatus
     )
 }
 
@@ -158,6 +166,8 @@ fun EmailFieldComponent(
 @Composable
 fun PasswordFieldComponent(
     labelValue: String,
+    onTextSelected: (String) -> Unit,
+    errorStatus: Boolean
 ) {
     val password = remember {
         mutableStateOf("")
@@ -182,6 +192,7 @@ fun PasswordFieldComponent(
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         onValueChange = {
             password.value = it
+            onTextSelected(it)
         },
         leadingIcon = {
             Icon(painter = painterResource(id = R.drawable.lock), contentDescription = "")
@@ -194,7 +205,8 @@ fun PasswordFieldComponent(
                 Icon(imageVector = iconImage, contentDescription = description)
             }
         },
-        visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation()
+        visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
+        isError = !errorStatus
     )
 }
 
@@ -299,6 +311,7 @@ fun ClickableLoginTextComponent(
 @Composable
 fun ButtonComponent(
     value: String,
+    onButtonClicker: () -> Unit
 ) {
     Button(
         modifier = Modifier
@@ -308,6 +321,7 @@ fun ButtonComponent(
         shape = shapesComponent.small,
         colors = ButtonDefaults.buttonColors(Color.Transparent),
         onClick = {
+            onButtonClicker.invoke()
         }
 
     ) {
