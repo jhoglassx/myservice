@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.jhoglas.mysalon.ui.auth.LoginScreen
 import com.jhoglas.mysalon.ui.auth.RegisterScreen
 import com.jhoglas.mysalon.ui.auth.TermsAndConditionsScreen
+import com.jhoglas.mysalon.ui.home.HomeScreen
 import com.jhoglas.mysalon.ui.navigation.AppRouter
 import com.jhoglas.mysalon.ui.navigation.Screen
 import com.jhoglas.mysalon.ui.theme.MySalonTheme

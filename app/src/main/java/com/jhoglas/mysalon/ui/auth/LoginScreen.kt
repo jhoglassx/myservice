@@ -25,7 +25,7 @@ import com.jhoglas.mysalon.ui.compoment.EmailFieldComponent
 import com.jhoglas.mysalon.ui.compoment.HeadingTextComponent
 import com.jhoglas.mysalon.ui.compoment.NormalTextComponent
 import com.jhoglas.mysalon.ui.compoment.PasswordFieldComponent
-import com.jhoglas.mysalon.ui.compoment.UnderlineTextFieldComponent
+import com.jhoglas.mysalon.ui.compoment.UnderlineTextComponent
 import com.jhoglas.mysalon.ui.navigation.AppRouter
 import com.jhoglas.mysalon.ui.navigation.Screen
 import com.jhoglas.mysalon.ui.navigation.SystemBackButtonHandler
@@ -66,7 +66,7 @@ fun LoginScreen(loginViewModel: LoginViewModel = viewModel()) {
                     errorStatus = loginViewModel.loginUIState.value.passwordError
                 )
                 Spacer(modifier = Modifier.height(20.dp))
-                UnderlineTextFieldComponent(value = stringResource(id = R.string.forgot_password))
+                UnderlineTextComponent(value = stringResource(id = R.string.forgot_password))
 
                 Spacer(modifier = Modifier.height(40.dp))
                 ButtonComponent(
