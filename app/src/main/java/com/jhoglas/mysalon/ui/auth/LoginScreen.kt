@@ -1,13 +1,16 @@
 package com.jhoglas.mysalon.ui.auth
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -25,56 +28,72 @@ import com.jhoglas.mysalon.ui.compoment.PasswordFieldComponent
 import com.jhoglas.mysalon.ui.compoment.UnderlineTextFieldComponent
 import com.jhoglas.mysalon.ui.navigation.AppRouter
 import com.jhoglas.mysalon.ui.navigation.Screen
+import com.jhoglas.mysalon.ui.navigation.SystemBackButtonHandler
 
 @Composable
 fun LoginScreen(loginViewModel: LoginViewModel = viewModel()) {
-    Surface(
+    Box(
         modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(28.dp)
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
-        Column(
+        Surface(
             modifier = Modifier
                 .fillMaxSize()
+                .background(Color.White)
+                .padding(28.dp)
         ) {
-            NormalTextComponent(stringResource(id = R.string.login))
-            HeadingTextComponent(stringResource(id = R.string.welcome_back))
-            Spacer(modifier = Modifier.height(20.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                NormalTextComponent(stringResource(id = R.string.login))
+                HeadingTextComponent(stringResource(id = R.string.welcome_back))
+                Spacer(modifier = Modifier.height(20.dp))
 
-            EmailFieldComponent(
-                stringResource(id = R.string.email),
-                onTextSelected = {
-                    loginViewModel.onEvent(AuthUIEvent.EmailChange(it))
-                },
-                errorStatus = true
-            )
-            PasswordFieldComponent(
-                stringResource(id = R.string.password),
-                onTextSelected = {
-                    loginViewModel.onEvent(AuthUIEvent.PasswordChange(it))
-                },
-                errorStatus = true
-            )
-            Spacer(modifier = Modifier.height(20.dp))
-            UnderlineTextFieldComponent(value = stringResource(id = R.string.forgot_password))
+                EmailFieldComponent(
+                    stringResource(id = R.string.email),
+                    onTextSelected = {
+                        loginViewModel.onEvent(LoginUIEvent.EmailChange(it))
+                    },
+                    errorStatus = loginViewModel.loginUIState.value.emailError
+                )
+                PasswordFieldComponent(
+                    stringResource(id = R.string.password),
+                    onTextSelected = {
+                        loginViewModel.onEvent(LoginUIEvent.PasswordChange(it))
+                    },
+                    errorStatus = loginViewModel.loginUIState.value.passwordError
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                UnderlineTextFieldComponent(value = stringResource(id = R.string.forgot_password))
 
-            Spacer(modifier = Modifier.height(40.dp))
-            ButtonComponent(
-                value = stringResource(id = R.string.login),
-                onButtonClicker = {
-                    loginViewModel.onEvent(AuthUIEvent.RegisterButtonClick)
-                }
-            )
-            Spacer(modifier = Modifier.height(20.dp))
-            DividerComponent()
-            ClickableLoginTextComponent(
-                tryingToLogin = false,
-                onTextSelected = {
-                    AppRouter.navigateTo(Screen.RegisterScreen)
-                }
-            )
+                Spacer(modifier = Modifier.height(40.dp))
+                ButtonComponent(
+                    value = stringResource(id = R.string.login),
+                    onButtonClicker = {
+                        loginViewModel.onEvent(LoginUIEvent.LoginButtonClick)
+                    },
+                    isEnable = loginViewModel.allValidationsPassed.value
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                DividerComponent()
+                ClickableLoginTextComponent(
+                    tryingToLogin = false,
+                    onTextSelected = {
+                        AppRouter.navigateTo(Screen.RegisterScreen)
+                    }
+                )
+            }
         }
+
+        if (loginViewModel.loginInProgress.value) {
+            CircularProgressIndicator()
+        }
+    }
+
+    SystemBackButtonHandler {
+        AppRouter.navigateTo(Screen.RegisterScreen)
     }
 }
 

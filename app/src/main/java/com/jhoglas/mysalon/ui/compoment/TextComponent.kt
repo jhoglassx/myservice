@@ -241,6 +241,7 @@ fun PasswordFieldComponent(
 @Composable
 fun CheckboxComponent(
     onTextSelected: (String) -> Unit,
+    onCheckedChange: (Boolean) -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -256,6 +257,7 @@ fun CheckboxComponent(
             checked = checkedState.value,
             onCheckedChange = {
                 checkedState.value = !checkedState.value
+                onCheckedChange.invoke(it)
             }
         )
         ClickableTextComponent(onTextSelected)
@@ -341,6 +343,7 @@ fun ClickableLoginTextComponent(
 fun ButtonComponent(
     value: String,
     onButtonClicker: () -> Unit,
+    isEnable: Boolean = false
 ) {
     Button(
         modifier = Modifier
@@ -349,6 +352,7 @@ fun ButtonComponent(
         contentPadding = PaddingValues(),
         shape = shapesComponent.small,
         colors = ButtonDefaults.buttonColors(Color.Transparent),
+        enabled = isEnable,
         onClick = {
             onButtonClicker.invoke()
         }

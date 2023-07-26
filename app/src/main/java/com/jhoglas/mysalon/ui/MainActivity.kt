@@ -28,37 +28,16 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Crossfade(targetState = AppRouter.currentScreen) { currentState ->
+                    Crossfade(targetState = AppRouter.currentScreen, label = "") { currentState ->
                         when (currentState.value) {
                             is Screen.RegisterScreen -> RegisterScreen()
                             is Screen.TermsAndConditionsScreen -> TermsAndConditionsScreen()
                             is Screen.LoginScreen -> LoginScreen()
+                            is Screen.HomeScreen -> HomeScreen()
                         }
                     }
                 }
             }
-
-//            val navController = rememberNavController()
-//
-//            MySalonTheme {
-//                NavHost(navController = navController, startDestination = "register") {
-//                    composable("login") {
-//                        Login(navController)
-//                    }
-//                    composable("register") {
-//                        Register(navController)
-//                    }
-//                    composable("home") {
-//                        // A surface container using the 'background' color from the theme
-//                        Surface(
-//                            modifier = Modifier.fillMaxSize(),
-//                            color = MaterialTheme.colorScheme.background,
-//                        ) {
-//                            Greeting("Android")
-//                        }
-//                    }
-//                }
-//            }
         }
     }
 }

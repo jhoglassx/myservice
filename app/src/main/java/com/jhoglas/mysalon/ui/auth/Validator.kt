@@ -21,7 +21,13 @@ object Validator {
 
     fun validatePassword(password: String): ValidateResult {
         return ValidateResult(
-            (password.isNullOrEmpty().not() && password.length >= 6)
+            (password.isNullOrEmpty().not() && password.length >= 5)
+        )
+    }
+
+    fun validatePrivacyPolicyAcceptance(statusValue: Boolean): ValidateResult {
+        return ValidateResult(
+            statusValue
         )
     }
 }
