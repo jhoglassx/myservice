@@ -1,5 +1,6 @@
 package com.jhoglas.mysalon.ui.home
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,13 +26,22 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(homeViewModel: HomeViewModel = viewModel()) {
+
+    homeViewModel.getUserData()
+
     val scaffoldState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
 
 
     ModalNavigationDrawer(
         drawerState = scaffoldState,
-        drawerContent = {NavigationDrawer(navigationItem = homeViewModel.navigationItems)},
+        drawerContent = {NavigationDrawer(
+            value = homeViewModel.emailId.value,
+            navigationItem = homeViewModel.navigationItems,
+            onNavigationItemClicked ={
+                Log.d("Coming Here","onNavigationItemClicked ${it.itemId}")
+            }
+        )},
         content = {
             Scaffold(
                 topBar = {

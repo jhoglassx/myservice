@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Settings
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.jhoglas.mysalon.ui.auth.LoginViewModel
@@ -17,8 +18,8 @@ import com.jhoglas.mysalon.ui.navigation.Screen
 
 class HomeViewModel(): ViewModel(){
 
-    private val TAG = LoginViewModel::class.simpleName
-    val navigationItems = listOf<NavigationItem>(
+    private val TAG = HomeViewModel::class.simpleName
+    val navigationItems = listOf(
         NavigationItem(
             title = "Home",
             description = "Home Screen",
@@ -38,6 +39,8 @@ class HomeViewModel(): ViewModel(){
             icon = Icons.Default.Favorite
         )
     )
+    val isUserLoggedIn:MutableLiveData<Boolean> = MutableLiveData()
+    val emailId: MutableLiveData<String> = MutableLiveData()
 
 
     fun logout() {
@@ -54,5 +57,26 @@ class HomeViewModel(): ViewModel(){
         }
 
         firebaseAuth.addAuthStateListener(authStateListener)
+    }
+
+    fun checkForActiveSession() {
+        val firebaseAuth = FirebaseAuth.getInstance()
+        val currentUser = firebaseAuth.currentUser
+
+        if (currentUser != null) {
+            Log.d(TAG, "Valid session")
+            isUserLoggedIn.value = true
+        }else{
+            Log.d(TAG, "Invalid session")
+            isUserLoggedIn.value = false
+        }
+    }
+
+    fun getUserData() {
+        FirebaseAuth.getInstance().currentUser?.also {
+            it.email?.also { email ->
+                emailId.value = email
+            }
+        }
     }
 }
