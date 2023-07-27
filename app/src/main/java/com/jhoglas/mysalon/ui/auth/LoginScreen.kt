@@ -56,14 +56,14 @@ fun LoginScreen(loginViewModel: LoginViewModel = viewModel()) {
                     onTextSelected = {
                         loginViewModel.onEvent(LoginUIEvent.EmailChange(it))
                     },
-                    errorStatus = loginViewModel.loginUIState.value.emailError
+                    error = loginViewModel.loginUIState.value.emailError
                 )
                 PasswordFieldComponent(
                     stringResource(id = R.string.password),
                     onTextSelected = {
                         loginViewModel.onEvent(LoginUIEvent.PasswordChange(it))
                     },
-                    errorStatus = loginViewModel.loginUIState.value.passwordError
+                    error = loginViewModel.loginUIState.value.passwordError
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 UnderlineTextComponent(value = stringResource(id = R.string.forgot_password))

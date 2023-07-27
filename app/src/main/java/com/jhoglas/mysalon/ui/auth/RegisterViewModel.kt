@@ -64,11 +64,26 @@ class RegisterViewModel : ViewModel() {
         Log.d(TAG, "privacyPolicyResult = $privacyPolicyResult")
 
         registerUIState.value = registerUIState.value.copy(
-            firstNameError = firstNameResult.status,
-            lastNameError = lastNameResult.status,
-            emailError = emailResult.status,
-            passwordError = passwordResult.status,
-            privacyPolicyError = privacyPolicyResult.status
+            firstNameError = ValidateResult(
+                status = firstNameResult.status,
+                message = firstNameResult.message
+            ),
+            lastNameError = ValidateResult(
+                status = lastNameResult.status,
+                message = lastNameResult.message
+            ),
+            emailError = ValidateResult(
+                status = emailResult.status,
+                message = emailResult.message
+            ),
+            passwordError = ValidateResult(
+                status = passwordResult.status,
+                message = passwordResult.message
+            ),
+            privacyPolicyError = ValidateResult(
+                status = privacyPolicyResult.status,
+                message = privacyPolicyResult.message
+            )
         )
 
         allValidationsPassed.value = firstNameResult.status &&

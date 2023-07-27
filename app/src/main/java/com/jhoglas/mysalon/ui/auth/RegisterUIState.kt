@@ -7,9 +7,9 @@ data class RegisterUIState(
     var password: String = "",
     var privacyPolicyAccepted: Boolean = false,
 
-    var firstNameError: Boolean = false,
-    var lastNameError: Boolean = false,
-    var emailError: Boolean = false,
-    var passwordError: Boolean = false,
-    var privacyPolicyError: Boolean = false
+    var firstNameError: ValidateResult = ValidateResult(),
+    var lastNameError: ValidateResult = ValidateResult(),
+    var emailError: ValidateResult = ValidateResult(),
+    var passwordError: ValidateResult = ValidateResult(),
+    var privacyPolicyError: ValidateResult = ValidateResult(),
 )

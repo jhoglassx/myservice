@@ -1,7 +1,7 @@
 package com.jhoglas.mysalon.ui.compoment
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
@@ -19,20 +19,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.jhoglas.mysalon.R
+import com.jhoglas.mysalon.ui.auth.ValidateResult
 import com.jhoglas.mysalon.ui.theme.BgColor
-import com.jhoglas.mysalon.ui.theme.GrayColor
+import com.jhoglas.mysalon.ui.theme.ErrorColor
 import com.jhoglas.mysalon.ui.theme.Primary
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,7 +34,7 @@ import com.jhoglas.mysalon.ui.theme.Primary
 fun TextFieldComponent(
     labelValue: String,
     onTextSelected: (String) -> Unit,
-    errorStatus: Boolean,
+    error: ValidateResult,
 ) {
     val textValue = remember {
         mutableStateOf("")
@@ -51,6 +45,9 @@ fun TextFieldComponent(
             .fillMaxWidth()
             .clip(shapesComponent.small),
         label = { Text(text = labelValue) },
+        supportingText = {
+            if (!error.status) Text(text = error.message, color = ErrorColor)
+        },
         value = textValue.value,
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = Primary,
@@ -68,7 +65,7 @@ fun TextFieldComponent(
         leadingIcon = {
             Icon(painter = painterResource(id = R.drawable.profile), contentDescription = "")
         },
-        isError = !errorStatus,
+        isError = !error.status,
     )
 }
 
@@ -77,7 +74,7 @@ fun TextFieldComponent(
 fun EmailFieldComponent(
     labelValue: String,
     onTextSelected: (String) -> Unit,
-    errorStatus: Boolean
+    error: ValidateResult,
 ) {
     val emailValue = remember {
         mutableStateOf("")
@@ -88,6 +85,9 @@ fun EmailFieldComponent(
             .fillMaxWidth()
             .clip(shapesComponent.small),
         label = { Text(text = labelValue) },
+        supportingText = {
+            if (!error.status) Text(text = error.message, color = ErrorColor)
+        },
         value = emailValue.value,
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = Primary,
@@ -105,7 +105,7 @@ fun EmailFieldComponent(
         leadingIcon = {
             Icon(painter = painterResource(id = R.drawable.email), contentDescription = "")
         },
-        isError = !errorStatus
+        isError = !error.status
     )
 }
 
@@ -114,7 +114,7 @@ fun EmailFieldComponent(
 fun PasswordFieldComponent(
     labelValue: String,
     onTextSelected: (String) -> Unit,
-    errorStatus: Boolean
+    error: ValidateResult,
 ) {
     val password = remember {
         mutableStateOf("")
@@ -123,41 +123,42 @@ fun PasswordFieldComponent(
     val passwordVisible = remember {
         mutableStateOf(false)
     }
+    Column {
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(shapesComponent.small),
+            label = { Text(text = labelValue) },
+            supportingText = {
+                if (!error.status) Text(text = error.message, color = ErrorColor)
+            },
+            value = password.value,
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = Primary,
+                focusedLabelColor = Primary,
+                cursorColor = Primary,
+                containerColor = BgColor
+            ),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Next),
+            singleLine = true,
+            maxLines = 1,
+            onValueChange = {
+                password.value = it
+                onTextSelected(it)
+            },
+            leadingIcon = {
+                Icon(painter = painterResource(id = R.drawable.lock), contentDescription = "")
+            },
+            trailingIcon = {
+                val iconImage = if (passwordVisible.value) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
+                var description = if (passwordVisible.value) stringResource(id = R.string.hide_password) else stringResource(id = R.string.show_password)
 
-    OutlinedTextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(shapesComponent.small),
-        label = { Text(text = labelValue) },
-        value = password.value,
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = Primary,
-            focusedLabelColor = Primary,
-            cursorColor = Primary,
-            containerColor = BgColor
-        ),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Next),
-        singleLine = true,
-        maxLines = 1,
-        onValueChange = {
-            password.value = it
-            onTextSelected(it)
-        },
-        leadingIcon = {
-            Icon(painter = painterResource(id = R.drawable.lock), contentDescription = "")
-        },
-        trailingIcon = {
-            val iconImage = if (passwordVisible.value) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
-            var description = if (passwordVisible.value) stringResource(id = R.string.hide_password) else stringResource(id = R.string.show_password)
-
-            IconButton(onClick = { passwordVisible.value = !passwordVisible.value }) {
-                Icon(imageVector = iconImage, contentDescription = description)
-            }
-        },
-        visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
-        isError = !errorStatus
-    )
+                IconButton(onClick = { passwordVisible.value = !passwordVisible.value }) {
+                    Icon(imageVector = iconImage, contentDescription = description)
+                }
+            },
+            visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
+            isError = !error.status
+        )
+    }
 }
-
-
-

@@ -56,14 +56,14 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = viewModel()) {
                     onTextSelected = {
                         registerViewModel.onEvent(RegisterUIEvent.FirstNameChange(it))
                     },
-                    errorStatus = registerViewModel.registerUIState.value.firstNameError
+                    error = registerViewModel.registerUIState.value.firstNameError
                 )
                 TextFieldComponent(
                     stringResource(id = R.string.last_name),
                     onTextSelected = {
                         registerViewModel.onEvent(RegisterUIEvent.LastNameChange(it))
                     },
-                    errorStatus = registerViewModel.registerUIState.value.lastNameError
+                    error = registerViewModel.registerUIState.value.lastNameError
                 )
                 // Spacer(modifier = Modifier.height(20.dp))
                 EmailFieldComponent(
@@ -71,7 +71,7 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = viewModel()) {
                     onTextSelected = {
                         registerViewModel.onEvent(RegisterUIEvent.EmailChange(it))
                     },
-                    errorStatus = registerViewModel.registerUIState.value.emailError
+                    error = registerViewModel.registerUIState.value.emailError
                 )
                 // EmailFieldComponent(stringResource(id = R.string.re_email))
                 // Spacer(modifier = Modifier.height(20.dp))
@@ -80,7 +80,7 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = viewModel()) {
                     onTextSelected = {
                         registerViewModel.onEvent(RegisterUIEvent.PasswordChange(it))
                     },
-                    errorStatus = registerViewModel.registerUIState.value.passwordError
+                    error = registerViewModel.registerUIState.value.passwordError
                 )
                 // PasswordFieldComponent(stringResource(id = R.string.re_password))
                 CheckboxComponent(

@@ -42,8 +42,14 @@ class LoginViewModel : ViewModel() {
         val passwordResult = Validator.validatePassword(loginUIState.value.password)
 
         loginUIState.value = loginUIState.value.copy(
-            emailError = emailResult.status,
-            passwordError = passwordResult.status
+            emailError = ValidateResult(
+                status = emailResult.status,
+                message = emailResult.message
+            ),
+            passwordError = ValidateResult(
+                status = passwordResult.status,
+                message = passwordResult.message
+            )
         )
 
         allValidationsPassed.value = emailResult.status && passwordResult.status
