@@ -77,7 +77,7 @@ fun TextFieldComponent(
 fun EmailFieldComponent(
     labelValue: String,
     onTextSelected: (String) -> Unit,
-    errorStatus: Boolean,
+    errorStatus: Boolean
 ) {
     val emailValue = remember {
         mutableStateOf("")
@@ -114,7 +114,7 @@ fun EmailFieldComponent(
 fun PasswordFieldComponent(
     labelValue: String,
     onTextSelected: (String) -> Unit,
-    errorStatus: Boolean,
+    errorStatus: Boolean
 ) {
     val password = remember {
         mutableStateOf("")

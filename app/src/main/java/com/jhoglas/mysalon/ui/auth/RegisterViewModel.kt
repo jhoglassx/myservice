@@ -46,7 +46,6 @@ class RegisterViewModel : ViewModel() {
     private fun register() {
         Log.d(TAG, "Registering...")
         printState()
-
         createUserInFirebase()
     }
 

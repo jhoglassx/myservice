@@ -2,21 +2,17 @@ package com.jhoglas.mysalon.ui.home
 
 import android.util.Log
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Settings
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.jhoglas.mysalon.ui.auth.LoginViewModel
 import com.jhoglas.mysalon.ui.entity.NavigationItem
 import com.jhoglas.mysalon.ui.navigation.AppRouter
 import com.jhoglas.mysalon.ui.navigation.Screen
 
-class HomeViewModel(): ViewModel(){
+class HomeViewModel() : ViewModel() {
 
     private val TAG = HomeViewModel::class.simpleName
     val navigationItems = listOf(
@@ -39,9 +35,8 @@ class HomeViewModel(): ViewModel(){
             icon = Icons.Default.Favorite
         )
     )
-    val isUserLoggedIn:MutableLiveData<Boolean> = MutableLiveData()
+    val isUserLoggedIn: MutableLiveData<Boolean> = MutableLiveData()
     val emailId: MutableLiveData<String> = MutableLiveData()
-
 
     fun logout() {
         val firebaseAuth = FirebaseAuth.getInstance()
@@ -66,7 +61,7 @@ class HomeViewModel(): ViewModel(){
         if (currentUser != null) {
             Log.d(TAG, "Valid session")
             isUserLoggedIn.value = true
-        }else{
+        } else {
             Log.d(TAG, "Invalid session")
             isUserLoggedIn.value = false
         }

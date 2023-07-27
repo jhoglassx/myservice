@@ -33,5 +33,5 @@ object Validator {
 }
 
 data class ValidateResult(
-    val status: Boolean = false,
+    val status: Boolean = false
 )

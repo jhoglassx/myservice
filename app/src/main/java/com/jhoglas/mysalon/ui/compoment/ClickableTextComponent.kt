@@ -19,7 +19,7 @@ import com.jhoglas.mysalon.ui.theme.Primary
 
 @Composable
 fun ClickableTextComponent(
-    onTextSelected: (String) -> Unit,
+    onTextSelected: (String) -> Unit
 ) {
     val initialText = "By continuing your accept our "
     val privacyPolicyText = "Privacy Policy "
@@ -58,7 +58,7 @@ fun ClickableTextComponent(
 @Composable
 fun ClickableLoginTextComponent(
     tryingToLogin: Boolean = true,
-    onTextSelected: (String) -> Unit,
+    onTextSelected: (String) -> Unit
 ) {
     val initialText = if (tryingToLogin)"Already have an account? " else "Don't have an account yet? "
     val loginText = if (tryingToLogin) "Login " else "Sign up"

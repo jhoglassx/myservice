@@ -26,7 +26,7 @@ import com.jhoglas.mysalon.ui.theme.Secondary
 fun ButtonComponent(
     value: String,
     onButtonClicker: () -> Unit,
-    isEnable: Boolean = false,
+    isEnable: Boolean = false
 ) {
     Button(
         modifier = Modifier

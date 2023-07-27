@@ -1,13 +1,9 @@
 package com.jhoglas.mysalon.ui.main
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,7 +19,7 @@ import com.jhoglas.mysalon.ui.theme.MySalonTheme
 
 @Composable
 fun main(
-    homeViewModel: HomeViewModel = viewModel()
+    homeViewModel: HomeViewModel = viewModel(),
 ) {
     homeViewModel.checkForActiveSession()
 
@@ -32,7 +28,6 @@ fun main(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-
             if (homeViewModel.isUserLoggedIn.value == true) {
                 AppRouter.navigateTo(Screen.HomeScreen)
             }

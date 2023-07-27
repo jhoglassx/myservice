@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun CheckboxComponent(
     onTextSelected: (String) -> Unit,
-    onCheckedChange: (Boolean) -> Unit,
+    onCheckedChange: (Boolean) -> Unit
 ) {
     Row(
         modifier = Modifier

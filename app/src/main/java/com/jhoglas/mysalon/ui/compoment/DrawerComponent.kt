@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -36,13 +35,12 @@ import com.jhoglas.mysalon.ui.theme.Secondary
 fun NavigationDrawer(
     value: String?,
     navigationItem: List<NavigationItem>,
-    onNavigationItemClicked: (NavigationItem) -> Unit
+    onNavigationItemClicked: (NavigationItem) -> Unit,
 ) {
     ModalDrawerSheet(
         modifier = Modifier
             .width(200.dp),
         drawerShape = RoundedCornerShape(0.dp)
-
     ) {
         NavigationDrawerHeader(value)
         NavigationDrawerBody(
@@ -61,7 +59,7 @@ fun NavigationDrawerHeader(
             .fillMaxWidth()
             .background(Primary)
     ) {
-        HeadingTextComponent(value?:stringResource(id = R.string.navigation_header))
+        HeadingTextComponent(value ?: stringResource(id = R.string.navigation_header))
     }
 }
 
@@ -73,8 +71,8 @@ fun NavigationDrawerBody(
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
-    ){
-        items(navigationItem){
+    ) {
+        items(navigationItem) {
             NavigationItemRow(
                 item = it,
                 onNavigationItemClicked = onNavigationItemClicked
@@ -85,9 +83,9 @@ fun NavigationDrawerBody(
 
 @Composable
 fun NavigationItemRow(
-    item : NavigationItem,
+    item: NavigationItem,
     onNavigationItemClicked: (NavigationItem) -> Unit
-){
+) {
     val shadowOffset = Offset(4f, 6f)
     Row(
         modifier = Modifier
@@ -111,13 +109,10 @@ fun NavigationItemRow(
                 fontStyle = FontStyle.Normal,
                 shadow = Shadow(
                     color = Secondary,
-                    offset = shadowOffset, 2f
+                    offset = shadowOffset,
+                    2f
                 )
             )
         )
     }
 }
-
-
-
-
