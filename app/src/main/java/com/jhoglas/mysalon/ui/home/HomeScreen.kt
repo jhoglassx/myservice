@@ -3,7 +3,10 @@ package com.jhoglas.mysalon.ui.home
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -17,17 +20,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.unit.dp
 import com.jhoglas.mysalon.R
 import com.jhoglas.mysalon.ui.compoment.AppToolBar
 import com.jhoglas.mysalon.ui.compoment.NavigationDrawer
+import com.jhoglas.mysalon.ui.compoment.PromotionsComponent
+import com.jhoglas.mysalon.ui.compoment.EstablishmentListComponent
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(homeViewModel: HomeViewModel = viewModel()) {
-    homeViewModel.getUserData()
-
+fun HomeScreen() {
     val scaffoldState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
 
@@ -35,8 +38,8 @@ fun HomeScreen(homeViewModel: HomeViewModel = viewModel()) {
         drawerState = scaffoldState,
         drawerContent = {
             NavigationDrawer(
-                value = homeViewModel.emailId.value,
-                navigationItem = homeViewModel.navigationItems,
+                value = "",
+                navigationItem = listOf(),
                 onNavigationItemClicked = {
                     Log.d("Coming Here", "onNavigationItemClicked ${it.itemId}")
                 }
@@ -48,7 +51,7 @@ fun HomeScreen(homeViewModel: HomeViewModel = viewModel()) {
                     AppToolBar(
                         toolbarTitle = stringResource(id = R.string.home),
                         logoutButtonClicked = {
-                            homeViewModel.logout()
+                            // homeViewModel.logout()
                         },
                         navigationIconClicked = {
                             coroutineScope.launch {
@@ -68,6 +71,10 @@ fun HomeScreen(homeViewModel: HomeViewModel = viewModel()) {
                         modifier = Modifier
                             .fillMaxSize()
                     ) {
+                        Spacer(modifier = Modifier.fillMaxWidth().height(16.dp))
+                        PromotionsComponent()
+                        Spacer(modifier = Modifier.fillMaxWidth().height(16.dp))
+                        EstablishmentListComponent()
                     }
                 }
             }

@@ -2,8 +2,10 @@ package com.jhoglas.mysalon
 
 import android.app.Application
 import com.google.firebase.FirebaseApp
+import dagger.hilt.android.HiltAndroidApp
 
-class SalonApp : Application() {
+@HiltAndroidApp
+class SalonApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         FirebaseApp.initializeApp(this)
