@@ -11,6 +11,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jhoglas.mysalon.ui.auth.LoginScreen
 import com.jhoglas.mysalon.ui.auth.RegisterScreen
 import com.jhoglas.mysalon.ui.auth.TermsAndConditionsScreen
+import com.jhoglas.mysalon.ui.establishment.EstablishmentScreen
 import com.jhoglas.mysalon.ui.home.HomeScreen
 import com.jhoglas.mysalon.ui.home.HomeViewModel
 import com.jhoglas.mysalon.ui.navigation.AppRouter
@@ -38,6 +39,7 @@ fun main(
                     is Screen.TermsAndConditionsScreen -> TermsAndConditionsScreen()
                     is Screen.LoginScreen -> LoginScreen()
                     is Screen.HomeScreen -> HomeScreen()
+                    is Screen.EstablishmentScreen -> EstablishmentScreen()
                 }
             }
         }

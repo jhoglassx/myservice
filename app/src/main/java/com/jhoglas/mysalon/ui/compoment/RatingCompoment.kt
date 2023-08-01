@@ -11,9 +11,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.jhoglas.mysalon.ui.theme.Primary
+import com.jhoglas.mysalon.ui.theme.Secondary
 
 @Composable
 fun RatingWithReports(rating: Float, reportCount: Int, maxRating: Int = 5, starSize: Int = 18) {
@@ -47,7 +49,7 @@ fun StarIcon(icon: ImageVector, starSize: Int) {
     Icon(
         imageVector = icon,
         contentDescription = null,
-        tint = Primary,
+        tint = Color.White,
         modifier = Modifier.width(starSize.dp)
     )
 }

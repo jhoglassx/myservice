@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,13 +26,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jhoglas.mysalon.R
 import com.jhoglas.mysalon.ui.theme.Primary
+import java.util.Locale
 
 @Preview
 @Composable
@@ -134,26 +136,32 @@ fun EstablishmentItemComponent(
 
 @Composable
 fun ServicesListComponent() {
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    Row(
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        item {
-            ServicesItemComponent(
-                icon = Icons.Default.Home,
-                title = "Corte"
-            )
-        }
-        item {
-            ServicesItemComponent(
-                icon = Icons.Default.Home,
-                title = "Corte"
-            )
-        }
-        item {
-            ServicesItemComponent(
-                icon = Icons.Default.Home,
-                title = "Corte"
-            )
+        Text(text = "Servicos:".uppercase(Locale.ROOT), fontSize = 12.sp, color = Color.LightGray, fontWeight = FontWeight.Bold)
+        Spacer(modifier = Modifier.width(4.dp))
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            item {
+                ServicesItemComponent(
+                    icon = Icons.Default.Home,
+                    title = "Corte"
+                )
+            }
+            item {
+                ServicesItemComponent(
+                    icon = Icons.Default.Home,
+                    title = "Corte"
+                )
+            }
+            item {
+                ServicesItemComponent(
+                    icon = Icons.Default.Home,
+                    title = "Corte"
+                )
+            }
         }
     }
 }
@@ -163,25 +171,5 @@ fun ServicesItemComponent(
     title: String = "",
     icon: ImageVector,
 ) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(20.dp),
-        shape = RoundedCornerShape(4.dp),
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = Color.White)
-                .padding(horizontal = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = "",
-                tint = Color.Black
-            )
-            Text(text = title, fontSize = 14.sp, color = Color.Black, fontWeight = FontWeight.Bold)
-        }
-    }
+    CategoryListCardComponent(title = title, icon = icon)
 }
