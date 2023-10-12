@@ -1,6 +1,5 @@
 package com.jhoglas.mysalon.ui.compoment
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,27 +15,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.jhoglas.mysalon.R
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.jhoglas.mysalon.domain.EstablishmentDomainEntity
 
-@Preview
 @Composable
-fun BannerComponent() {
+fun BannerComponent(
+    establishment: EstablishmentDomainEntity,
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(150.dp)
             .background(Color.Transparent)
     ) {
-        Image(
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(establishment.img)
+                .crossfade(true)
+                .build(),
             modifier = Modifier
                 .fillMaxSize(),
-            painter = painterResource(id = R.drawable.establishment),
             contentDescription = "",
             alignment = Alignment.CenterStart,
             contentScale = ContentScale.Crop
@@ -51,7 +55,7 @@ fun BannerComponent() {
         ) {
             Text(
                 style = TextStyle(shadow = Shadow(color = Color.Black, blurRadius = 10f)),
-                text = "Barbearia do Jose",
+                text = establishment.name,
                 fontSize = 24.sp,
                 color = Color.White,
                 fontWeight = FontWeight.Bold

@@ -1,5 +1,7 @@
 package com.jhoglas.mysalon.ui.compoment
 
+import android.media.ImageReader
+import android.os.Bundle
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,96 +15,81 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.jhoglas.mysalon.R
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.jhoglas.mysalon.domain.EstablishmentDomainEntity
+import com.jhoglas.mysalon.ui.navigation.AppRouter
+import com.jhoglas.mysalon.ui.navigation.Screen
 import com.jhoglas.mysalon.ui.theme.Primary
 
-@Preview
 @Composable
-fun EstablishmentListComponent() {
+fun EstablishmentListComponent(
+    listEstablishment: List<EstablishmentDomainEntity>,
+) {
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        item {
-            EstablishmentItemComponent(
-                imagePainter = painterResource(id = R.drawable.promotion),
-                title = "Fruit",
-                subtitle = "Start @",
-                header = "$1",
-            )
-        }
-        item {
-            EstablishmentItemComponent(
-                imagePainter = painterResource(id = R.drawable.promotion),
-                title = "Meat",
-                subtitle = "Discount",
-                header = "20%",
-            )
-        }
-        item {
-            EstablishmentItemComponent(
-                imagePainter = painterResource(id = R.drawable.promotion),
-                title = "Meat",
-                subtitle = "Discount",
-                header = "20%",
-            )
-        }
-        item {
-            EstablishmentItemComponent(
-                imagePainter = painterResource(id = R.drawable.promotion),
-                title = "Meat",
-                subtitle = "Discount",
-                header = "20%",
-            )
-        }
-        item {
-            EstablishmentItemComponent(
-                imagePainter = painterResource(id = R.drawable.promotion),
-                title = "Meat",
-                subtitle = "Discount",
-                header = "20%",
-            )
+        itemsIndexed(
+            items = listEstablishment
+        ) { _, item ->
+            EstablishmentItemComponent(item = item)
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EstablishmentItemComponent(
-    title: String = "",
-    subtitle: String = "",
-    header: String = "",
-    imagePainter: Painter,
+    item: EstablishmentDomainEntity,
 ) {
     Card(
         modifier = Modifier.fillMaxWidth().height(110.dp),
         shape = RoundedCornerShape(8.dp),
+        onClick = {
+            AppRouter.navigateTo(
+                Screen.EstablishmentScreen,
+                Bundle().apply {
+                    putString("establishmentId", item.id)
+                }
+            )
+        }
     ) {
         Row(
             modifier = Modifier
                 .background(Primary)
+                .padding(2.dp)
         ) {
-            Image(
-                painter = imagePainter,
-                contentDescription = "",
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(item.img)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = item.description,
                 modifier = Modifier
-                    .size(110.dp),
+                    .size(110.dp)
+                    .clip(RoundedCornerShape(8.dp)),
                 alignment = Alignment.CenterEnd,
                 contentScale = ContentScale.Crop
             )
@@ -117,44 +104,36 @@ fun EstablishmentItemComponent(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = title, fontSize = 18.sp, color = Color.White, fontWeight = FontWeight.ExtraBold)
-                    RatingBar(rating = 4.5f, starSize = 14)
+                    Text(text = item.name, fontSize = 18.sp, color = Color.White, fontWeight = FontWeight.ExtraBold)
+                    RatingBar(rating = item.rating, starSize = 14)
                 }
                 Spacer(modifier = Modifier.height(4.dp))
-                ServicesListComponent()
+                ServicesListComponent(
+                    item.services
+                )
                 Spacer(modifier = Modifier.height(8.dp))
-                AddressWithMapIcon(address = "Rua Dublin 229, Duque de Caxias, Betim - MG")
+                AddressWithMapIcon(address = item.address)
             }
         }
     }
 }
 
 @Composable
-fun ServicesListComponent() {
+fun ServicesListComponent(
+    sevices: List<String>,
+) {
     Column(
         // verticalAlignment = Alignment.CenterVertically
     ) {
         Text(text = "Services Disponiveis:", fontSize = 12.sp, color = Color.White, fontWeight = FontWeight.Normal)
         Spacer(modifier = Modifier.height(4.dp))
         LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            item {
+            items(sevices) { item ->
                 ServicesItemComponent(
                     icon = Icons.Default.Home,
-                    title = "Corte"
-                )
-            }
-            item {
-                ServicesItemComponent(
-                    icon = Icons.Default.Home,
-                    title = "Corte"
-                )
-            }
-            item {
-                ServicesItemComponent(
-                    icon = Icons.Default.Home,
-                    title = "Corte"
+                    title = item
                 )
             }
         }

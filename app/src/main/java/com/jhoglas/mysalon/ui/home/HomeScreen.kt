@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jhoglas.mysalon.R
 import com.jhoglas.mysalon.ui.compoment.AppToolBar
 import com.jhoglas.mysalon.ui.compoment.EstablishmentListComponent
@@ -30,7 +31,9 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    homeViewModel: HomeViewModel = viewModel()
+) {
     val scaffoldState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
 
@@ -51,7 +54,7 @@ fun HomeScreen() {
                     AppToolBar(
                         toolbarTitle = stringResource(id = R.string.home),
                         logoutButtonClicked = {
-                            // homeViewModel.logout()
+                            homeViewModel.logout()
                         },
                         navigationIconClicked = {
                             coroutineScope.launch {
@@ -74,7 +77,7 @@ fun HomeScreen() {
                         Spacer(modifier = Modifier.fillMaxWidth().height(16.dp))
                         PromotionsComponent()
                         Spacer(modifier = Modifier.fillMaxWidth().height(16.dp))
-                        EstablishmentListComponent()
+                        EstablishmentListComponent(homeViewModel.listEstablishment())
                     }
                 }
             }

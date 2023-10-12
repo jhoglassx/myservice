@@ -1,5 +1,6 @@
 package com.jhoglas.mysalon.ui.establishment
 
+import EstablishmentViewModel
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -17,17 +18,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jhoglas.mysalon.R
 import com.jhoglas.mysalon.ui.compoment.AppToolBar
 import com.jhoglas.mysalon.ui.compoment.BannerComponent
 import com.jhoglas.mysalon.ui.compoment.NavigationDrawer
 import com.jhoglas.mysalon.ui.compoment.ProfessionalListComponent
+import com.jhoglas.mysalon.ui.home.HomeViewModel
+import com.jhoglas.mysalon.ui.navigation.AppRouter
+import com.jhoglas.mysalon.ui.navigation.Screen
+import com.jhoglas.mysalon.ui.navigation.SystemBackButtonHandler
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun EstablishmentScreen() {
+fun EstablishmentScreen(
+    homeViewModel: HomeViewModel = viewModel(),
+    establishmentViewModel: EstablishmentViewModel = viewModel(),
+) {
+    val establishmentId = AppRouter.bundle?.getString("establishmentId")
+    val establishment = establishmentId?.let { establishmentViewModel.establishment(it) }
+    val professionals = establishmentId?.let { establishmentViewModel.listProfessionals(it) }
     val scaffoldState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
 
@@ -48,7 +60,7 @@ fun EstablishmentScreen() {
                     AppToolBar(
                         toolbarTitle = stringResource(id = R.string.home),
                         logoutButtonClicked = {
-                            // homeViewModel.logout()
+                            homeViewModel.logout()
                         },
                         navigationIconClicked = {
                             coroutineScope.launch {
@@ -68,11 +80,19 @@ fun EstablishmentScreen() {
                         modifier = Modifier
                             .fillMaxSize()
                     ) {
-                        BannerComponent()
-                        ProfessionalListComponent()
+                        establishment?.let {
+                            BannerComponent(it)
+                        }
+                        professionals?.let {
+                            ProfessionalListComponent(it)
+                        }
                     }
                 }
             }
         }
     )
+
+    SystemBackButtonHandler {
+        AppRouter.navigateTo(Screen.HomeScreen)
+    }
 }

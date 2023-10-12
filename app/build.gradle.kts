@@ -5,15 +5,15 @@ plugins {
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
     kotlin("kapt")
+    id("kotlin-parcelize")
 }
-
 android {
     namespace = "com.jhoglas.mysalon"
     compileSdk = 33
 
     defaultConfig {
         applicationId = "com.jhoglas.mysalon"
-        minSdk = 31
+        minSdk = 33
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
@@ -106,4 +106,8 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.44.2")
     androidTestImplementation("com.google.dagger:hilt-android-testing:2.44.2")
     kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.44.2")
+
+    // Coil
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
 }

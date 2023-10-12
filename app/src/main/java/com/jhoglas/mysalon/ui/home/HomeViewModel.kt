@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.jhoglas.mysalon.domain.getEstablishments
 import com.jhoglas.mysalon.ui.entity.NavigationItem
 import com.jhoglas.mysalon.ui.navigation.AppRouter
 import com.jhoglas.mysalon.ui.navigation.Screen
@@ -74,4 +75,6 @@ class HomeViewModel() : ViewModel() {
             }
         }
     }
+
+    fun listEstablishment() = getEstablishments()
 }
