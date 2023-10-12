@@ -23,9 +23,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jhoglas.mysalon.R
 import com.jhoglas.mysalon.ui.compoment.AppToolBar
+import com.jhoglas.mysalon.ui.compoment.EstablishmentListComponent
 import com.jhoglas.mysalon.ui.compoment.NavigationDrawer
 import com.jhoglas.mysalon.ui.compoment.PromotionsComponent
-import com.jhoglas.mysalon.ui.compoment.EstablishmentListComponent
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
