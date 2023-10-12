@@ -76,7 +76,7 @@ fun ProfessionalItem(
                 painter = imagePainter,
                 contentDescription = "",
                 modifier = Modifier
-                    .size(90.dp),
+                    .size(106.dp),
                 alignment = Alignment.CenterEnd,
                 contentScale = ContentScale.Crop
             )

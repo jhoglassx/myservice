@@ -34,7 +34,7 @@ fun CategoryListCardComponent(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(color = Color(0xFF7283BB))
-                .padding(4.dp, 2.dp),
+                .padding(6.dp, 2.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
@@ -43,7 +43,7 @@ fun CategoryListCardComponent(
                 tint = Color.LightGray,
             )
             Spacer(modifier = Modifier.width(4.dp))
-            Text(text = title, fontSize = 10.sp, color = Color.LightGray, fontWeight = FontWeight.Bold)
+            Text(text = title.uppercase(), fontSize = 10.sp, color = Color.LightGray, fontWeight = FontWeight.Bold)
         }
     }
 }
