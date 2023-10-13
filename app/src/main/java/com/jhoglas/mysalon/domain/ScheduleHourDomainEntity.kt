@@ -9,6 +9,7 @@ data class ScheduleHourDomainEntity(
     val day: Int,
     val start: LocalTime,
     val end: LocalTime,
+    val isSelected: Boolean = false
 ) : Parcelable
 
 fun getScheduleHours(): List<ScheduleHourDomainEntity> = listOf(

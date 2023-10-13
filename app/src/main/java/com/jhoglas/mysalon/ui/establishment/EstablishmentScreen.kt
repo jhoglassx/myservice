@@ -17,15 +17,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jhoglas.mysalon.R
-import com.jhoglas.mysalon.domain.ScheduleDayDomainEntity
-import com.jhoglas.mysalon.domain.ScheduleHourDomainEntity
 import com.jhoglas.mysalon.ui.compoment.AppToolBar
 import com.jhoglas.mysalon.ui.compoment.BannerComponent
 import com.jhoglas.mysalon.ui.compoment.NavigationDrawer
@@ -51,15 +48,9 @@ fun EstablishmentScreen(
     val establishment by remember {
         mutableStateOf(establishmentViewModel.establishment(establishmentId))
     }
-    var professionals by remember {
-        mutableStateOf(establishmentViewModel.listProfessionals(establishmentId))
-    }
-    var scheduleDays by remember {
-        mutableStateOf(listOf<ScheduleDayDomainEntity>())
-    }
-    var scheduleHours by remember {
-        mutableStateOf(listOf<ScheduleHourDomainEntity>())
-    }
+    var professionals = establishmentViewModel.professionals
+    var scheduleDates = establishmentViewModel.scheduleDates
+    var scheduleHours = establishmentViewModel.scheduleHours
     val scaffoldState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
 
@@ -106,14 +97,17 @@ fun EstablishmentScreen(
                     }
                     professionals?.let {
                         ProfessionalsComponent(it) { professional ->
-                            scheduleDays = establishmentViewModel.listScheduleDays(professional.id)
-                            scheduleHours = emptyList()
+                            establishmentViewModel.professionalUpdate(professional)
+                            establishmentViewModel.scheduleDates(professional.id)
                         }
                     }
-                    ScheduleDayComponent(scheduleDays) {
-                        scheduleHours = establishmentViewModel.listScheduleHours(it.getDayFromDate())
+                    ScheduleDayComponent(scheduleDates) { scheduleDate ->
+                        establishmentViewModel.scheduleDateUpdate(scheduleDate)
+                        establishmentViewModel.listScheduleHours(scheduleDate.date.getDayFromDate())
                     }
-                    ScheduleHourComponent(scheduleHours)
+                    ScheduleHourComponent(scheduleHours) { scheduleHour ->
+                        establishmentViewModel.scheduleHourUpdate(scheduleHour)
+                    }
                 }
             }
         }

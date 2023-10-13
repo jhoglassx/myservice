@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,18 +25,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.jhoglas.mysalon.domain.ScheduleDayDomainEntity
+import com.jhoglas.mysalon.domain.ScheduleDateDomainEntity
 import com.jhoglas.mysalon.domain.ScheduleHourDomainEntity
 import com.jhoglas.mysalon.ui.theme.Primary
+import com.jhoglas.mysalon.ui.theme.PrimarySelected
 import com.jhoglas.mysalon.utils.extensions.getDayFromDate
 import com.jhoglas.mysalon.utils.extensions.getMonthFromDate
-import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScheduleDayComponent(
-    days: List<ScheduleDayDomainEntity>,
-    selectedDay: (Date) -> Unit,
+    dates: List<ScheduleDateDomainEntity>,
+    selectedDate: (ScheduleDateDomainEntity) -> Unit,
 ) {
     CategoryTitleTextComponent("Schedule Day")
     Box(
@@ -48,14 +49,17 @@ fun ScheduleDayComponent(
             state = rememberLazyListState(),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            items(days) {
+            items(dates) {
+                var color: Color = if (it.isSelected) PrimarySelected else Primary
                 Card(
-                    onClick = { selectedDay.invoke(it.date) }
+                    onClick = { selectedDate.invoke(it) },
+                    colors = CardDefaults.cardColors(
+                        containerColor = color
+                    )
                 ) {
                     Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Primary, shape = RoundedCornerShape(15)),
+                            .fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally,
 
                     ) {
@@ -82,9 +86,11 @@ fun ScheduleDayComponent(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScheduleHourComponent(
     hours: List<ScheduleHourDomainEntity>,
+    hourClicked: (ScheduleHourDomainEntity) -> Unit,
 ) {
     CategoryTitleTextComponent("Schedule Hours")
     Box(
@@ -99,20 +105,27 @@ fun ScheduleHourComponent(
             verticalArrangement = Arrangement.spacedBy(4.dp),
             content = {
                 items(hours.size) { index ->
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Primary, shape = RoundedCornerShape(15)),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                    var color: Color = if (hours[index].isSelected) PrimarySelected else Primary
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = color
+                        ),
+                        onClick = { hourClicked.invoke(hours[index]) },
                     ) {
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = hours[index].start.toString(),
-                            fontSize = 16.sp,
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(8.dp, 4.dp)
-                        )
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = hours[index].start.toString(),
+                                fontSize = 16.sp,
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(8.dp, 4.dp)
+                            )
+                        }
                     }
                 }
             }

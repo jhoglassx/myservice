@@ -10,9 +10,12 @@ data class ProfessionalDomainEntity(
     val name: String,
     val photo: String,
     val services: List<String>,
+    var isSelected: Boolean = false
 ) : Parcelable
 
-fun getProfessionals(): List<ProfessionalDomainEntity> = listOf(
+
+
+fun getProfessionals(): MutableList<ProfessionalDomainEntity> = mutableListOf(
     ProfessionalDomainEntity(
         id = "1",
         establishmentId = 1,

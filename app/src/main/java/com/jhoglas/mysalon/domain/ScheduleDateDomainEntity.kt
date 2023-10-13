@@ -6,13 +6,14 @@ import java.util.Calendar
 import java.util.Date
 
 @Parcelize
-data class ScheduleDayDomainEntity(
+data class ScheduleDateDomainEntity(
     val professionalId: String,
     val date: Date,
+    val isSelected: Boolean = false,
 ) : Parcelable
 
 fun getScheduleDays() = listOf(
-    ScheduleDayDomainEntity(
+    ScheduleDateDomainEntity(
         professionalId = "1",
         date = Calendar.getInstance().apply {
             set(Calendar.DAY_OF_MONTH, 1)
@@ -21,7 +22,7 @@ fun getScheduleDays() = listOf(
         }.time
 
     ),
-    ScheduleDayDomainEntity(
+    ScheduleDateDomainEntity(
         professionalId = "1",
         date = Calendar.getInstance().apply {
             set(Calendar.DAY_OF_MONTH, 2)
@@ -30,7 +31,7 @@ fun getScheduleDays() = listOf(
         }.time
 
     ),
-    ScheduleDayDomainEntity(
+    ScheduleDateDomainEntity(
         professionalId = "1",
         date = Calendar.getInstance().apply {
             set(Calendar.DAY_OF_MONTH, 3)
@@ -39,7 +40,7 @@ fun getScheduleDays() = listOf(
         }.time
 
     ),
-    ScheduleDayDomainEntity(
+    ScheduleDateDomainEntity(
         professionalId = "4",
         date = Calendar.getInstance().apply {
             set(Calendar.DAY_OF_MONTH, 4)
@@ -48,7 +49,7 @@ fun getScheduleDays() = listOf(
         }.time
 
     ),
-    ScheduleDayDomainEntity(
+    ScheduleDateDomainEntity(
         professionalId = "4",
         date = Calendar.getInstance().apply {
             set(Calendar.DAY_OF_MONTH, 5)
@@ -57,7 +58,7 @@ fun getScheduleDays() = listOf(
         }.time
 
     ),
-    ScheduleDayDomainEntity(
+    ScheduleDateDomainEntity(
         professionalId = "6",
         date = Calendar.getInstance().apply {
             set(Calendar.DAY_OF_MONTH, 6)
@@ -66,7 +67,7 @@ fun getScheduleDays() = listOf(
         }.time
 
     ),
-    ScheduleDayDomainEntity(
+    ScheduleDateDomainEntity(
         professionalId = "7",
         date = Calendar.getInstance().apply {
             set(Calendar.DAY_OF_MONTH, 7)
@@ -75,7 +76,7 @@ fun getScheduleDays() = listOf(
         }.time
 
     ),
-    ScheduleDayDomainEntity(
+    ScheduleDateDomainEntity(
         professionalId = "8",
         date = Calendar.getInstance().apply {
             set(Calendar.DAY_OF_MONTH, 8)
@@ -84,7 +85,7 @@ fun getScheduleDays() = listOf(
         }.time
 
     ),
-    ScheduleDayDomainEntity(
+    ScheduleDateDomainEntity(
         professionalId = "3",
         date = Calendar.getInstance().apply {
             set(Calendar.DAY_OF_MONTH, 9)
@@ -93,7 +94,7 @@ fun getScheduleDays() = listOf(
         }.time
 
     ),
-    ScheduleDayDomainEntity(
+    ScheduleDateDomainEntity(
         professionalId = "10",
         date = Calendar.getInstance().apply {
             set(Calendar.DAY_OF_MONTH, 10)
