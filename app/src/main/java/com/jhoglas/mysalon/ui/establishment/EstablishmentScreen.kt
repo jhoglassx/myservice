@@ -56,6 +56,7 @@ fun EstablishmentScreen(
     var professionals = establishmentViewModel.professionals
     var scheduleDates = establishmentViewModel.scheduleDates
     var scheduleHours = establishmentViewModel.scheduleHours
+    var scheduleBottomIsEnabled = establishmentViewModel.scheduleBottomIsEnabled
     val scaffoldState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
 
@@ -121,7 +122,9 @@ fun EstablishmentScreen(
                         establishmentViewModel.scheduleHourUpdate(scheduleHour)
                     }
                     Spacer(modifier = Modifier.weight(1f))
-                    ScheduleButtonComponent()
+                    ScheduleButtonComponent(scheduleBottomIsEnabled) {
+                        establishmentViewModel.scheduleBottomClick()
+                    }
                 }
             }
         }

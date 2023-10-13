@@ -69,11 +69,10 @@ fun ButtonComponent(
     }
 }
 
-@Preview
 @Composable
 fun ScheduleButtonComponent(
-    onButtonClicker: () -> Unit = {},
-    isEnable: Boolean = false
+    isEnable: Boolean = false,
+    onButtonClicker: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -98,7 +97,7 @@ fun ScheduleButtonComponent(
                 text = "SCHEDULE",
                 color = Color.White,
                 style = TextStyle(
-                    fontSize = 12.sp,
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     fontStyle = FontStyle.Normal
                 )

@@ -6,12 +6,15 @@ import androidx.lifecycle.ViewModel
 import com.jhoglas.mysalon.domain.EstablishmentDomainEntity
 import com.jhoglas.mysalon.domain.ProfessionalDomainEntity
 import com.jhoglas.mysalon.domain.ScheduleDateDomainEntity
+import com.jhoglas.mysalon.domain.ScheduleEntity
 import com.jhoglas.mysalon.domain.ScheduleHourDomainEntity
 import com.jhoglas.mysalon.domain.ServiceDomainEntity
 import com.jhoglas.mysalon.domain.getEstablishments
 import com.jhoglas.mysalon.domain.getProfessionals
 import com.jhoglas.mysalon.domain.getScheduleDays
 import com.jhoglas.mysalon.domain.getScheduleHours
+import java.time.LocalTime
+import java.util.Date
 
 class EstablishmentViewModel() : ViewModel() {
 
@@ -30,11 +33,16 @@ class EstablishmentViewModel() : ViewModel() {
     var scheduleHours by mutableStateOf(listOf<ScheduleHourDomainEntity>())
         private set
 
+    var schedule: ScheduleEntity by mutableStateOf(ScheduleEntity())
+        private set
+
+    var scheduleBottomIsEnabled: Boolean by mutableStateOf(false)
+        private set
+
     fun establishment(establishmentId: String) {
         getEstablishments().find { it.id == establishmentId }?.let {
             establishment = it
             establishmentService = it.services.toMutableList()
-            professionals = listProfessionals(it.id)
         }
     }
 
@@ -51,13 +59,16 @@ class EstablishmentViewModel() : ViewModel() {
     }
 
     private fun professionalFilter() {
-        val serviceSelected = establishmentService.filter { it.isSelected }
-        val professionalsFilter = listProfessionals(establishmentId = establishment.id).filter { professional ->
-            serviceSelected.any { selectedService ->
-                professional.services.filter { it.title == selectedService.title }.any { true }
+        val selectedServices = establishmentService.filter { it.isSelected }.map { it.title }
+
+        val professionalsFilter = listProfessionals(establishmentId = establishment.id)
+            .filter { professional ->
+                selectedServices.all { selectedService ->
+                    professional.services.any { it.title == selectedService }
+                }
             }
-        }
-        professionals = professionalsFilter.ifEmpty { listProfessionals(establishmentId = establishment.id) }
+
+        professionals = professionalsFilter
     }
 
     fun scheduleDates(professionalId: String) {
@@ -82,10 +93,15 @@ class EstablishmentViewModel() : ViewModel() {
             it.copy(isSelected = it == hour)
         }
         scheduleHours = updatedHours
+        scheduleBottomIsEnabled = scheduleHours.any { it.isSelected }
     }
 
     private fun scheduleHourClear() {
         scheduleHours = emptyList()
+    }
+
+    private fun scheduleDateClear() {
+        scheduleDates = emptyList()
     }
 
     fun serviceUpdate(service: ServiceDomainEntity) {
@@ -98,5 +114,21 @@ class EstablishmentViewModel() : ViewModel() {
         }
         establishmentService = updatedService
         professionalFilter()
+        scheduleBottomIsEnabled = false
+
+        scheduleHourClear()
+        scheduleDateClear()
+    }
+
+    fun scheduleBottomClick() {
+        schedule = ScheduleEntity(
+            userId = "1",
+            establishmentId = establishment.id,
+            professionalId = professionals.find { it.isSelected }?.id ?: "",
+            service = establishmentService.filter { it.isSelected },
+            day = scheduleDates.find { it.isSelected }?.date ?: Date(),
+            time = scheduleHours.find { it.isSelected }?.start ?: LocalTime.MIN,
+            isAvailable = true
+        )
     }
 }
