@@ -4,7 +4,6 @@ import EstablishmentViewModel
 import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -28,6 +27,7 @@ import com.jhoglas.mysalon.ui.compoment.AppToolBar
 import com.jhoglas.mysalon.ui.compoment.BannerComponent
 import com.jhoglas.mysalon.ui.compoment.NavigationDrawer
 import com.jhoglas.mysalon.ui.compoment.ProfessionalsComponent
+import com.jhoglas.mysalon.ui.compoment.ScheduleButtonComponent
 import com.jhoglas.mysalon.ui.compoment.ScheduleDateComponent
 import com.jhoglas.mysalon.ui.compoment.ScheduleHourComponent
 import com.jhoglas.mysalon.ui.compoment.ServicesComponent
@@ -120,6 +120,8 @@ fun EstablishmentScreen(
                     ScheduleHourComponent(scheduleHours) { scheduleHour ->
                         establishmentViewModel.scheduleHourUpdate(scheduleHour)
                     }
+                    Spacer(modifier = Modifier.weight(1f))
+                    ScheduleButtonComponent()
                 }
             }
         }

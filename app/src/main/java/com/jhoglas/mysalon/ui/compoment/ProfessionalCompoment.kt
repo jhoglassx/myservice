@@ -1,13 +1,11 @@
 package com.jhoglas.mysalon.ui.compoment
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -25,6 +23,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.jhoglas.mysalon.domain.ProfessionalDomainEntity
@@ -36,19 +35,21 @@ fun ProfessionalsComponent(
     professionals: List<ProfessionalDomainEntity>,
     professionalClicked: (ProfessionalDomainEntity) -> Unit,
 ) {
-    CategoryTitleTextComponent(title = "Professionals")
-    Spacer(modifier = Modifier.height(8.dp))
-    Box(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        contentAlignment = Alignment.CenterStart
+            .padding(horizontal = 16.dp)
     ) {
-        LazyRow(
-            state = rememberLazyListState()
-        ) {
-            itemsIndexed(professionals) { index, professional ->
-                ProfessionalItem(professional, index, professionalClicked)
+        Column {
+            CategoryTitleTextComponent(title = "Professionals")
+            Spacer(modifier = Modifier.height(8.dp))
+            LazyRow(
+                state = rememberLazyListState(),
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                itemsIndexed(professionals) { _, professional ->
+                    ProfessionalItem(professional, professionalClicked)
+                }
             }
         }
     }
@@ -58,44 +59,36 @@ fun ProfessionalsComponent(
 @Composable
 fun ProfessionalItem(
     professional: ProfessionalDomainEntity,
-    index: Int,
     onProfessionalSelected: (ProfessionalDomainEntity) -> Unit,
 ) {
     var color: Color = if (professional.isSelected) PrimarySelected else Primary
-
-    if (index != 0) {
-        Spacer(modifier = Modifier.size(8.dp))
-    } else {
-        Spacer(modifier = Modifier.size(0.dp))
-    }
-
     Card(
         colors = CardDefaults.cardColors(
             containerColor = color
         ),
         onClick = {
             onProfessionalSelected(professional)
-        }
+        },
+        shape = shapesComponent.small
     ) {
-        Column {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(professional.photo)
-                    .crossfade(true)
-                    .build(),
-                contentDescription = "",
-                modifier = Modifier
-                    .size(100.dp, 60.dp),
-                alignment = Alignment.CenterEnd,
-                contentScale = ContentScale.Crop
-            )
-            Text(
-                text = professional.name,
-                color = Color.White,
-                fontWeight = SemiBold,
-                modifier = Modifier
-                    .padding(8.dp, 4.dp)
-            )
-        }
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(professional.photo)
+                .crossfade(true)
+                .build(),
+            contentDescription = "",
+            modifier = Modifier
+                .size(80.dp, 60.dp),
+            alignment = Alignment.CenterEnd,
+            contentScale = ContentScale.Crop
+        )
+        Text(
+            text = professional.name,
+            color = Color.White,
+            fontWeight = SemiBold,
+            fontSize = 10.sp,
+            modifier = Modifier
+                .padding(8.dp, 4.dp)
+        )
     }
 }

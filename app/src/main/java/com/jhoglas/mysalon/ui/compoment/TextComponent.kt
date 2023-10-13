@@ -81,7 +81,7 @@ fun CategoryTitleTextComponent(title: String) {
         text = title.uppercase(),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(vertical = 8.dp),
         style = TextStyle(
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
