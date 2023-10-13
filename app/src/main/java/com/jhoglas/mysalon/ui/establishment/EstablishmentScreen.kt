@@ -14,8 +14,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,9 +43,11 @@ fun EstablishmentScreen(
     establishmentViewModel: EstablishmentViewModel = viewModel(),
 ) {
     val establishmentId = AppRouter.bundle?.getString("establishmentId") ?: ""
-    val establishment by remember {
-        mutableStateOf(establishmentViewModel.establishment(establishmentId))
+    if (establishmentViewModel.establishment.id != establishmentId) {
+        establishmentViewModel.establishment(establishmentId)
     }
+
+    val establishment = establishmentViewModel.establishment
     var professionals = establishmentViewModel.professionals
     var scheduleDates = establishmentViewModel.scheduleDates
     var scheduleHours = establishmentViewModel.scheduleHours

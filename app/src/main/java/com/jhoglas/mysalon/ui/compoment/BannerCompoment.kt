@@ -55,7 +55,7 @@ fun BannerComponent(
         ) {
             Text(
                 style = TextStyle(shadow = Shadow(color = Color.Black, blurRadius = 10f)),
-                text = establishment.name,
+                text = establishment.name ,
                 fontSize = 24.sp,
                 color = Color.White,
                 fontWeight = FontWeight.Bold

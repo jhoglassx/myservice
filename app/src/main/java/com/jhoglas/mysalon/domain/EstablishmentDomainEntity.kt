@@ -5,12 +5,12 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class EstablishmentDomainEntity(
-    val id: String,
-    val name: String,
+    val id: String = "",
+    val name: String = "",
     val description: String = "",
-    val address: String,
-    val img: String,
-    val services: List<String>,
+    val address: String = "",
+    val img: String = "",
+    val services: List<String> = emptyList(),
     val rating: Float = 0f
 ) : Parcelable
 

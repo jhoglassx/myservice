@@ -1,7 +1,9 @@
+
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.jhoglas.mysalon.domain.EstablishmentDomainEntity
 import com.jhoglas.mysalon.domain.ProfessionalDomainEntity
 import com.jhoglas.mysalon.domain.ScheduleDateDomainEntity
 import com.jhoglas.mysalon.domain.ScheduleHourDomainEntity
@@ -12,18 +14,26 @@ import com.jhoglas.mysalon.domain.getScheduleHours
 
 class EstablishmentViewModel() : ViewModel() {
 
+    var establishment by mutableStateOf(EstablishmentDomainEntity())
+        private set
+
     var professionals by mutableStateOf(listOf<ProfessionalDomainEntity>())
         private set
 
-    var scheduleDates by mutableStateOf((listOf<ScheduleDateDomainEntity>()))
+    var scheduleDates by mutableStateOf(listOf<ScheduleDateDomainEntity>())
         private set
 
-    var scheduleHours by mutableStateOf((listOf<ScheduleHourDomainEntity>()))
+    var scheduleHours by mutableStateOf(listOf<ScheduleHourDomainEntity>())
         private set
 
-    fun establishment(id: String) = getEstablishments().find { it.id == id }
-    private fun listProfessionals(id: String? = null) {
-        professionals = getProfessionals()
+    fun establishment(establishmentId: String) {
+        getEstablishments().find { it.id == establishmentId }?.let {
+            establishment = it
+        }
+        professionals = getProfessionals().filter { it.establishmentId == establishmentId }
+    }
+    fun listProfessionals(establishmentId: String? = null) {
+        professionals = getProfessionals().filter { it.establishmentId == establishmentId }
     }
 
     fun professionalUpdate(professional: ProfessionalDomainEntity) {
@@ -60,9 +70,5 @@ class EstablishmentViewModel() : ViewModel() {
 
     private fun scheduleHourClear() {
         scheduleHours = emptyList()
-    }
-
-    init {
-        listProfessionals()
     }
 }
