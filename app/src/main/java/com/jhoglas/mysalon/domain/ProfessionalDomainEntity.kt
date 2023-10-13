@@ -9,7 +9,7 @@ data class ProfessionalDomainEntity(
     val establishmentId: String,
     val name: String,
     val photo: String,
-    val services: List<String>,
+    val services: List<ServiceDomainEntity>,
     var isSelected: Boolean = false
 ) : Parcelable
 
@@ -21,34 +21,63 @@ fun getProfessionals(): MutableList<ProfessionalDomainEntity> = mutableListOf(
         establishmentId = "1",
         name = "John Doe1",
         photo = "https://picsum.photos/150/150",
-        services = listOf("Haircut", "Beard", "Shave")
+        services = listOf(
+            ServiceDomainEntity("Corte de Cabelo"),
+            ServiceDomainEntity("Pintura de Cabelo")
+        )
     ),
     ProfessionalDomainEntity(
         id = "2",
-        establishmentId = "2",
+        establishmentId = "1",
         name = "John Doe2",
         photo = "https://picsum.photos/151/151",
-        services = listOf("Haircut", "Beard", "Shave")
+        services = listOf(
+            ServiceDomainEntity("Corte de Cabelo"),
+            ServiceDomainEntity("Barba")
+        )
     ),
     ProfessionalDomainEntity(
         id = "3",
         establishmentId = "1",
         name = "John Doe3",
         photo = "https://picsum.photos/152/152",
-        services = listOf("Haircut", "Beard", "Shave")
+        services = listOf(
+            ServiceDomainEntity("Corte de Cabelo"),
+            ServiceDomainEntity("Barba")
+        )
     ),
     ProfessionalDomainEntity(
         id = "4",
         establishmentId = "2",
         name = "John Doe4",
         photo = "https://picsum.photos/153/153",
-        services = listOf("Haircut", "Beard", "Shave")
+        services = listOf(
+            ServiceDomainEntity(
+                title = "Haircut"
+            ),
+            ServiceDomainEntity(
+                title = "Beard"
+            ),
+            ServiceDomainEntity(
+                title = "Shave"
+            )
+        )
     ),
     ProfessionalDomainEntity(
         id = "5",
         establishmentId = "2",
         name = "John Doe5",
         photo = "https://picsum.photos/154/154",
-        services = listOf("Haircut", "Beard", "Shave")
+        services = listOf(
+            ServiceDomainEntity(
+                title = "Haircut"
+            ),
+            ServiceDomainEntity(
+                title = "Beard"
+            ),
+            ServiceDomainEntity(
+                title = "Shave"
+            )
+        )
     )
 )

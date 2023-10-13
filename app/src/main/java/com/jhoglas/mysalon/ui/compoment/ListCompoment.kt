@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.jhoglas.mysalon.domain.EstablishmentDomainEntity
+import com.jhoglas.mysalon.domain.ServiceDomainEntity
 import com.jhoglas.mysalon.ui.navigation.AppRouter
 import com.jhoglas.mysalon.ui.navigation.Screen
 import com.jhoglas.mysalon.ui.theme.Primary
@@ -115,7 +116,7 @@ fun EstablishmentItemComponent(
 
 @Composable
 fun ServicesListComponent(
-    sevices: List<String>,
+    sevices: List<ServiceDomainEntity>,
 ) {
     Column(
         // verticalAlignment = Alignment.CenterVertically
@@ -133,6 +134,6 @@ fun ServicesListComponent(
 }
 
 @Composable
-fun ServicesItemComponent(item: String) {
-    CategoryListCardComponent(title = item, icon = Icons.Default.Home)
+fun ServicesItemComponent(item: ServiceDomainEntity) {
+    CategoryListCardComponent(title = item.title, icon = Icons.Default.Home)
 }

@@ -1,6 +1,7 @@
 package com.jhoglas.mysalon.ui.theme
 
 import androidx.compose.ui.graphics.Color
+import com.jhoglas.mysalon.utils.extensions.hexToRgb
 
 val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)
@@ -18,3 +19,4 @@ val GrayColor = Color(0xFF7B6F72)
 val WhiteColor = Color(0xFFFFFFFF)
 val BgColor = Color(0xFFF7F8F8)
 val ErrorColor = Color(0xFFD00036)
+val GrayAlmostWhite = "#f6f6f6".hexToRgb()

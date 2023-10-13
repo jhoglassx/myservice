@@ -1,19 +1,19 @@
 package com.jhoglas.mysalon.ui.compoment
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,50 +34,55 @@ import com.jhoglas.mysalon.utils.extensions.getMonthFromDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScheduleDayComponent(
+fun ScheduleDateComponent(
     dates: List<ScheduleDateDomainEntity>,
-    selectedDate: (ScheduleDateDomainEntity) -> Unit,
+    dateClicked: (ScheduleDateDomainEntity) -> Unit,
 ) {
     CategoryTitleTextComponent("Schedule Day")
+    Spacer(modifier = Modifier.height(8.dp))
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
-        Alignment.Center
+        contentAlignment = Alignment.CenterStart
     ) {
         LazyRow(
-            state = rememberLazyListState(),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             items(dates) {
                 var color: Color = if (it.isSelected) PrimarySelected else Primary
                 Card(
-                    onClick = { selectedDate.invoke(it) },
+                    onClick = { dateClicked.invoke(it) },
                     colors = CardDefaults.cardColors(
                         containerColor = color
                     )
                 ) {
                     Column(
                         modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
 
                     ) {
-                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "Day".uppercase(),
+                            fontSize = 12.sp,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
                         Text(
                             text = it.date.getDayFromDate().toString(),
-                            fontSize = 16.sp,
+                            fontSize = 36.sp,
                             color = Color.White,
                             fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(8.dp, 4.dp)
                         )
-                        Spacer(modifier = Modifier.width(4.dp))
+                        Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = it.date.getMonthFromDate(),
-                            fontSize = 16.sp,
+                            text = it.date.getMonthFromDate().uppercase(),
+                            fontSize = 12.sp,
                             color = Color.White,
                             fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(8.dp, 4.dp)
                         )
                     }
                 }
@@ -93,6 +98,7 @@ fun ScheduleHourComponent(
     hourClicked: (ScheduleHourDomainEntity) -> Unit,
 ) {
     CategoryTitleTextComponent("Schedule Hours")
+    Spacer(modifier = Modifier.height(8.dp))
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -103,6 +109,7 @@ fun ScheduleHourComponent(
             columns = GridCells.Fixed(5),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = Modifier.heightIn(max = 200.dp),
             content = {
                 items(hours.size) { index ->
                     var color: Color = if (hours[index].isSelected) PrimarySelected else Primary
