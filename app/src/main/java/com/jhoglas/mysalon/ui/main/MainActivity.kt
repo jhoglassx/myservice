@@ -1,5 +1,6 @@
 package com.jhoglas.mysalon.ui.main
 
+import android.os.Bundle
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -30,7 +31,12 @@ fun main(
             color = MaterialTheme.colorScheme.background
         ) {
             if (homeViewModel.isUserLoggedIn.value == true) {
-                AppRouter.navigateTo(Screen.HomeScreen)
+                AppRouter.navigateTo(
+                    Screen.EstablishmentScreen,
+                    Bundle().apply {
+                        putString("establishmentId", "1")
+                    }
+                )
             }
 
             Crossfade(targetState = AppRouter.currentScreen, label = "") { currentState ->

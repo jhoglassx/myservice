@@ -13,21 +13,31 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jhoglas.mysalon.R
+import com.jhoglas.mysalon.domain.ScheduleDayDomainEntity
+import com.jhoglas.mysalon.domain.ScheduleHourDomainEntity
 import com.jhoglas.mysalon.ui.compoment.AppToolBar
 import com.jhoglas.mysalon.ui.compoment.BannerComponent
 import com.jhoglas.mysalon.ui.compoment.NavigationDrawer
-import com.jhoglas.mysalon.ui.compoment.ProfessionalListComponent
+import com.jhoglas.mysalon.ui.compoment.ProfessionalsComponent
+import com.jhoglas.mysalon.ui.compoment.ScheduleDayComponent
+import com.jhoglas.mysalon.ui.compoment.ScheduleHourComponent
+import com.jhoglas.mysalon.ui.compoment.ServicesComponent
 import com.jhoglas.mysalon.ui.home.HomeViewModel
 import com.jhoglas.mysalon.ui.navigation.AppRouter
 import com.jhoglas.mysalon.ui.navigation.Screen
 import com.jhoglas.mysalon.ui.navigation.SystemBackButtonHandler
+import com.jhoglas.mysalon.utils.extensions.getDayFromDate
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,9 +47,19 @@ fun EstablishmentScreen(
     homeViewModel: HomeViewModel = viewModel(),
     establishmentViewModel: EstablishmentViewModel = viewModel(),
 ) {
-    val establishmentId = AppRouter.bundle?.getString("establishmentId")
-    val establishment = establishmentId?.let { establishmentViewModel.establishment(it) }
-    val professionals = establishmentId?.let { establishmentViewModel.listProfessionals(it) }
+    val establishmentId = AppRouter.bundle?.getString("establishmentId") ?: ""
+    val establishment by remember {
+        mutableStateOf(establishmentViewModel.establishment(establishmentId))
+    }
+    var professionals by remember {
+        mutableStateOf(establishmentViewModel.listProfessionals(establishmentId))
+    }
+    var scheduleDays by remember {
+        mutableStateOf(listOf<ScheduleDayDomainEntity>())
+    }
+    var scheduleHours by remember {
+        mutableStateOf(listOf<ScheduleHourDomainEntity>())
+    }
     val scaffoldState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
 
@@ -53,44 +73,51 @@ fun EstablishmentScreen(
                     Log.d("Coming Here", "onNavigationItemClicked ${it.itemId}")
                 }
             )
-        },
-        content = {
-            Scaffold(
-                topBar = {
-                    AppToolBar(
-                        toolbarTitle = stringResource(id = R.string.home),
-                        logoutButtonClicked = {
-                            homeViewModel.logout()
-                        },
-                        navigationIconClicked = {
-                            coroutineScope.launch {
-                                scaffoldState.open()
-                            }
-                        }
-                    )
-                }
-            ) { paddingValues ->
-                Surface(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.White)
-                        .padding(paddingValues)
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                    ) {
-                        establishment?.let {
-                            BannerComponent(it)
-                        }
-                        professionals?.let {
-                            ProfessionalListComponent(it)
+        }
+    ) {
+        Scaffold(
+            topBar = {
+                AppToolBar(
+                    toolbarTitle = stringResource(id = R.string.home),
+                    logoutButtonClicked = {
+                        homeViewModel.logout()
+                    },
+                    navigationIconClicked = {
+                        coroutineScope.launch {
+                            scaffoldState.open()
                         }
                     }
+                )
+            }
+        ) { paddingValues ->
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
+                    .padding(paddingValues)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    establishment?.let {
+                        BannerComponent(it)
+                        ServicesComponent(it.services)
+                    }
+                    professionals?.let {
+                        ProfessionalsComponent(it) { professional ->
+                            scheduleDays = establishmentViewModel.listScheduleDays(professional.id)
+                            scheduleHours = emptyList()
+                        }
+                    }
+                    ScheduleDayComponent(scheduleDays) {
+                        scheduleHours = establishmentViewModel.listScheduleHours(it.getDayFromDate())
+                    }
+                    ScheduleHourComponent(scheduleHours)
                 }
             }
         }
-    )
+    }
 
     SystemBackButtonHandler {
         AppRouter.navigateTo(Screen.HomeScreen)

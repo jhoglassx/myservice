@@ -1,8 +1,6 @@
 package com.jhoglas.mysalon.ui.compoment
 
-import android.media.ImageReader
 import android.os.Bundle
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,7 +15,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -29,10 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -131,19 +126,13 @@ fun ServicesListComponent(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             items(sevices) { item ->
-                ServicesItemComponent(
-                    icon = Icons.Default.Home,
-                    title = item
-                )
+                ServicesItemComponent(item)
             }
         }
     }
 }
 
 @Composable
-fun ServicesItemComponent(
-    title: String = "",
-    icon: ImageVector,
-) {
-    CategoryListCardComponent(title = title, icon = icon)
+fun ServicesItemComponent(item: String) {
+    CategoryListCardComponent(title = item, icon = Icons.Default.Home)
 }

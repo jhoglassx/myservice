@@ -12,7 +12,6 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jhoglas.mysalon.ui.theme.GrayColor
@@ -77,14 +76,14 @@ fun UnderlineTextComponent(
 }
 
 @Composable
-fun CategoryTitleTextComponent() {
+fun CategoryTitleTextComponent(title: String) {
     Text(
-        text = "Profissionals",
+        text = title.uppercase(),
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp),
         style = TextStyle(
-            fontSize = 18.sp,
+            fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
             fontStyle = FontStyle.Normal,
         ),
