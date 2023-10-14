@@ -96,7 +96,7 @@ fun NavigationItemRow(
             .padding(16.dp)
     ) {
         Icon(
-            imageVector = item.icon,
+            imageVector = item.selectedIcon,
             contentDescription = item.description,
             tint = Primary
         )

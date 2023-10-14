@@ -5,6 +5,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Settings
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -15,29 +18,34 @@ import com.jhoglas.mysalon.ui.navigation.Screen
 
 class HomeViewModel() : ViewModel() {
 
-    private val TAG = HomeViewModel::class.simpleName
     val navigationItems = listOf(
         NavigationItem(
             title = "Home",
             description = "Home Screen",
             itemId = "homeScreen",
-            icon = Icons.Default.Home
+            selectedIcon = Icons.Filled.Home,
+            unselectedIcon = Icons.Outlined.Home,
+            screen = Screen.HomeScreen
         ),
         NavigationItem(
             title = "Settings",
             description = "Settings Screen",
             itemId = "settingsScreen",
-            icon = Icons.Default.Settings
+            selectedIcon = Icons.Filled.Settings,
+            unselectedIcon = Icons.Outlined.Settings,
+            screen = Screen.HomeScreen
         ),
         NavigationItem(
             title = "Favorite",
             description = "Favorite Screen",
             itemId = "favoriteScreen",
-            icon = Icons.Default.Favorite
+            selectedIcon = Icons.Filled.Favorite,
+            unselectedIcon = Icons.Outlined.Favorite,
+            screen = Screen.HomeScreen
         )
     )
     val isUserLoggedIn: MutableLiveData<Boolean> = MutableLiveData()
-    val emailId: MutableLiveData<String> = MutableLiveData()
+    private val emailId: MutableLiveData<String> = MutableLiveData()
 
     fun logout() {
         val firebaseAuth = FirebaseAuth.getInstance()
@@ -77,4 +85,8 @@ class HomeViewModel() : ViewModel() {
     }
 
     fun listEstablishment() = getEstablishments()
+
+    companion object {
+        const val TAG = "HomeViewModel"
+    }
 }

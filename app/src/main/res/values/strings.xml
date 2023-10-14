@@ -12,11 +12,13 @@
     <string name="terms_and_conditions_header">Term of Use</string>
     <string name="register">Register</string>
     <string name="login">Login</string>
+    <string name="login_with_google">Login With Google</string>
     <string name="welcome_back">Welcome Back</string>
     <string name="or">OR</string>
 
     <string name="forgot_password">Forgot your password</string>
     <string name="home">Home</string>
+    <string name="establishment">Establishment</string>
     <string name="logout">Logout</string>
     <string name="menu">Menu</string>
     <string name="navigation_header">Navigation Header</string>

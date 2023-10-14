@@ -76,6 +76,15 @@ fun LoginScreen(loginViewModel: LoginViewModel = viewModel()) {
                     },
                     isEnable = loginViewModel.allValidationsPassed.value
                 )
+                Spacer(modifier = Modifier.height(40.dp))
+                ButtonComponent(
+                    value = stringResource(id = R.string.login),
+                    onButtonClicker = {
+                        loginViewModel.onEvent(LoginUIEvent.LoginButtonClick)
+                    },
+                    isEnable = loginViewModel.allValidationsPassed.value
+                )
+
                 Spacer(modifier = Modifier.height(20.dp))
                 DividerComponent()
                 ClickableLoginTextComponent(
