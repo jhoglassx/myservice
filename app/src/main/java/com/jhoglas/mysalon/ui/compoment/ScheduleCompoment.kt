@@ -45,44 +45,53 @@ fun ScheduleDateComponent(
         Column {
             CategoryTitleTextComponent("Schedule Day")
             Spacer(modifier = Modifier.height(8.dp))
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                items(dates) {
-                    var color: Color = if (it.isSelected) PrimarySelected else Primary
-                    Card(
-                        onClick = { dateClicked.invoke(it) },
-                        colors = CardDefaults.cardColors(
-                            containerColor = color
-                        ),
-                        shape = shapesComponent.small
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 8.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
+            if (dates.isEmpty()) {
+                Text(
+                    text = "Select a professional for appointment day selection availability",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.LightGray
+                )
+            } else {
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    items(dates) {
+                        var color: Color = if (it.isSelected) PrimarySelected else Primary
+                        Card(
+                            onClick = { dateClicked.invoke(it) },
+                            colors = CardDefaults.cardColors(
+                                containerColor = color
+                            ),
+                            shape = shapesComponent.small
                         ) {
-                            Text(
-                                text = "Day".uppercase(),
-                                fontSize = 12.sp,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold,
-                            )
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Text(
-                                text = it.date.getDayFromDate().toString(),
-                                fontSize = 36.sp,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold,
-                            )
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Text(
-                                text = it.date.getMonthFromDate().uppercase(),
-                                fontSize = 12.sp,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold,
-                            )
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ) {
+                                Text(
+                                    text = "Day".uppercase(),
+                                    fontSize = 12.sp,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold,
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = it.date.getDayFromDate().toString(),
+                                    fontSize = 36.sp,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold,
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = it.date.getMonthFromDate().uppercase(),
+                                    fontSize = 12.sp,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold,
+                                )
+                            }
                         }
                     }
                 }
@@ -105,39 +114,49 @@ fun ScheduleHourComponent(
         Column {
             CategoryTitleTextComponent("Schedule Hours")
             Spacer(modifier = Modifier.height(8.dp))
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(5),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                modifier = Modifier.heightIn(max = 200.dp),
-                content = {
-                    items(hours.size) { index ->
-                        var color: Color = if (hours[index].isSelected) PrimarySelected else Primary
-                        Card(
-                            colors = CardDefaults.cardColors(
-                                containerColor = color
-                            ),
-                            onClick = { hourClicked.invoke(hours[index]) },
-                            shape = shapesComponent.small
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                horizontalAlignment = Alignment.CenterHorizontally
+            if (hours.isEmpty()) {
+                Text(
+                    text = "Select a date for appointment hour selection availability",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.LightGray
+                )
+            } else {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(5),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    modifier = Modifier.heightIn(max = 200.dp),
+                    content = {
+                        items(hours.size) { index ->
+                            var color: Color =
+                                if (hours[index].isSelected) PrimarySelected else Primary
+                            Card(
+                                colors = CardDefaults.cardColors(
+                                    containerColor = color
+                                ),
+                                onClick = { hourClicked.invoke(hours[index]) },
+                                shape = shapesComponent.small
                             ) {
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(
-                                    text = hours[index].start.toString(),
-                                    fontSize = 16.sp,
-                                    color = Color.White,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.padding(8.dp, 4.dp)
-                                )
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth(),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = hours[index].start.toString(),
+                                        fontSize = 16.sp,
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.padding(8.dp, 4.dp)
+                                    )
+                                }
                             }
                         }
                     }
-                }
-            )
+                )
+            }
         }
     }
 }

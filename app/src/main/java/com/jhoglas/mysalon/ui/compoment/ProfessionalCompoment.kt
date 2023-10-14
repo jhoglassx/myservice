@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,12 +44,21 @@ fun ProfessionalsComponent(
         Column {
             CategoryTitleTextComponent(title = "Professionals")
             Spacer(modifier = Modifier.height(8.dp))
-            LazyRow(
-                state = rememberLazyListState(),
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                itemsIndexed(professionals) { _, professional ->
-                    ProfessionalItem(professional, professionalClicked)
+            if (professionals.isEmpty()) {
+                Text(
+                    text = "Select a service for professional selection availability",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.LightGray
+                )
+            } else {
+                LazyRow(
+                    state = rememberLazyListState(),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    itemsIndexed(professionals) { _, professional ->
+                        ProfessionalItem(professional, professionalClicked)
+                    }
                 }
             }
         }

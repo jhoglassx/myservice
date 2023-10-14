@@ -43,7 +43,25 @@ class EstablishmentViewModel() : ViewModel() {
         getEstablishments().find { it.id == establishmentId }?.let {
             establishment = it
             establishmentService = it.services.toMutableList()
+            scheduleHourClear()
+            scheduleDateClear()
         }
+    }
+
+    fun serviceUpdate(service: ServiceDomainEntity) {
+        val updatedService = establishmentService.map {
+            if (it == service) {
+                it.copy(isSelected = !it.isSelected)
+            } else {
+                it
+            }
+        }
+        establishmentService = updatedService
+        professionalFilter()
+        scheduleBottomIsEnabled = false
+
+        scheduleHourClear()
+        scheduleDateClear()
     }
 
     private fun listProfessionals(
@@ -55,6 +73,7 @@ class EstablishmentViewModel() : ViewModel() {
             it.copy(isSelected = it == professional)
         }
         scheduleHourClear()
+        scheduleDateClear()
         professionals = updatedProfessionals
     }
 
@@ -68,7 +87,7 @@ class EstablishmentViewModel() : ViewModel() {
                 }
             }
 
-        professionals = professionalsFilter
+        professionals = if (selectedServices.isEmpty()) emptyList() else professionalsFilter
     }
 
     fun scheduleDates(professionalId: String) {
@@ -102,22 +121,6 @@ class EstablishmentViewModel() : ViewModel() {
 
     private fun scheduleDateClear() {
         scheduleDates = emptyList()
-    }
-
-    fun serviceUpdate(service: ServiceDomainEntity) {
-        val updatedService = establishmentService.map {
-            if (it == service) {
-                it.copy(isSelected = !it.isSelected)
-            } else {
-                it
-            }
-        }
-        establishmentService = updatedService
-        professionalFilter()
-        scheduleBottomIsEnabled = false
-
-        scheduleHourClear()
-        scheduleDateClear()
     }
 
     fun scheduleBottomClick() {
