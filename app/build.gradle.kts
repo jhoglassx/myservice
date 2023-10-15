@@ -28,7 +28,7 @@ android {
 
     buildTypes {
         debug {
-            applicationIdSuffix = ".debug"
+            //applicationIdSuffix = ".debug"
             manifestPlaceholders["usesCleartextTraffic"] = true
         }
         release {
@@ -88,6 +88,8 @@ dependencies {
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:32.2.0"))
     implementation("com.google.firebase:firebase-analytics-ktx")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation("com.google.firebase:firebase-database-ktx")
 
     // Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
@@ -104,6 +106,8 @@ dependencies {
     // Dagger Hilt
     api("com.google.dagger:hilt-android:2.44.2")
     kapt("com.google.dagger:hilt-android-compiler:2.44.2")
+    api("androidx.hilt:hilt-navigation-compose:1.0.0")
+    api("androidx.hilt:hilt-navigation-fragment:1.0.0")
     androidTestImplementation("com.google.dagger:hilt-android-testing:2.44.2")
     kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.44.2")
 

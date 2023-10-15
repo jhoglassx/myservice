@@ -7,3 +7,4 @@ sealed class LoginUIEvent() {
 
     object LoginButtonClick : LoginUIEvent()
 }
+

@@ -3,9 +3,12 @@ package com.jhoglas.mysalon.ui.auth
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.jhoglas.mysalon.ui.navigation.AppRouter
 import com.jhoglas.mysalon.ui.navigation.Screen
+import java.util.Date
 
 class RegisterViewModel : ViewModel() {
 
@@ -14,30 +17,28 @@ class RegisterViewModel : ViewModel() {
     val allValidationsPassed = mutableStateOf(false)
     val registerInProgress = mutableStateOf(false)
 
+    private val auth = Firebase.auth
+    private val database = Firebase.database
+
     fun onEvent(event: RegisterUIEvent) {
         when (event) {
             is RegisterUIEvent.FirstNameChange -> {
                 registerUIState.value = registerUIState.value.copy(firstName = event.firstName)
-                printState()
             }
             is RegisterUIEvent.LastNameChange -> {
                 registerUIState.value = registerUIState.value.copy(lastName = event.lastName)
-                printState()
             }
             is RegisterUIEvent.EmailChange -> {
                 registerUIState.value = registerUIState.value.copy(email = event.email)
-                printState()
             }
             is RegisterUIEvent.PasswordChange -> {
                 registerUIState.value = registerUIState.value.copy(password = event.password)
-                printState()
             }
             is RegisterUIEvent.RegisterButtonClick -> {
                 register()
             }
             is RegisterUIEvent.PrivacyPolicyCheckChange -> {
                 registerUIState.value = registerUIState.value.copy(privacyPolicyAccepted = event.isChecked)
-                printState()
             }
         }
         validateFields()
@@ -45,7 +46,6 @@ class RegisterViewModel : ViewModel() {
 
     private fun register() {
         Log.d(TAG, "Registering...")
-        printState()
         createUserInFirebase()
     }
 
@@ -93,23 +93,29 @@ class RegisterViewModel : ViewModel() {
             privacyPolicyResult.status
     }
 
-    private fun printState() {
-        Log.d(TAG, "printState: ${registerUIState.value}")
-    }
-
     private fun createUserInFirebase() {
         registerInProgress.value = true
 
-        FirebaseAuth
-            .getInstance()
-            .createUserWithEmailAndPassword(
-                registerUIState.value.email,
-                registerUIState.value.password
-            )
+        val userData = UserData(
+            name = registerUIState.value.firstName,
+            email = registerUIState.value.email,
+            phoneNumber = registerUIState.value.email,
+            image = "",
+            dateCreate = Date().toString(),
+            dateUpdate = Date().toString()
+        )
+
+        auth.createUserWithEmailAndPassword(
+            registerUIState.value.email,
+            registerUIState.value.password
+        )
             .addOnCompleteListener {
                 Log.d(TAG, "Firebase addOnCompleteListener: ${it.isSuccessful}")
                 registerInProgress.value = false
                 if (it.isSuccessful) {
+                    database.getReference("accounts")
+                        .child(auth.currentUser?.uid ?: "")
+                        .setValue(userData)
                     AppRouter.navigateTo(Screen.HomeScreen)
                 }
             }

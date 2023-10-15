@@ -1,5 +1,6 @@
 package com.jhoglas.mysalon.ui.compoment
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,17 +12,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.graphics.toColorInt
+import com.jhoglas.mysalon.R
 import com.jhoglas.mysalon.ui.theme.Primary
 import com.jhoglas.mysalon.ui.theme.PrimarySelected
 import com.jhoglas.mysalon.ui.theme.Secondary
@@ -59,6 +65,47 @@ fun ButtonComponent(
             Text(
                 text = value,
                 style = TextStyle(
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontStyle = FontStyle.Normal
+                )
+            )
+        }
+    }
+}
+
+@Composable
+fun ButtonComponentLoginWithGoogle(
+    value: String,
+    onButtonClicker: () -> Unit,
+    isEnable: Boolean = false,
+) {
+    IconButton(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(4.dp),
+        enabled = isEnable,
+        onClick = {
+            onButtonClicker.invoke()
+        }
+    ) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .heightIn(48.dp)
+                .background(Color("#4285F4".toColorInt())),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.btn_google_dark_normal),
+                contentDescription = "Descrição do ícone"
+            )
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                text = value,
+                style = TextStyle(
+                    color = Color.White,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     fontStyle = FontStyle.Normal

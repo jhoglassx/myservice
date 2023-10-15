@@ -1,5 +1,9 @@
 package com.jhoglas.mysalon.ui.auth
 
+import android.app.Activity.RESULT_OK
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,11 +18,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.jhoglas.mysalon.R
+import com.jhoglas.mysalon.network.GoogleAuthUiClient
 import com.jhoglas.mysalon.ui.compoment.ButtonComponent
+import com.jhoglas.mysalon.ui.compoment.ButtonComponentLoginWithGoogle
 import com.jhoglas.mysalon.ui.compoment.ClickableLoginTextComponent
 import com.jhoglas.mysalon.ui.compoment.DividerComponent
 import com.jhoglas.mysalon.ui.compoment.EmailFieldComponent
@@ -29,9 +34,28 @@ import com.jhoglas.mysalon.ui.compoment.UnderlineTextComponent
 import com.jhoglas.mysalon.ui.navigation.AppRouter
 import com.jhoglas.mysalon.ui.navigation.Screen
 import com.jhoglas.mysalon.ui.navigation.SystemBackButtonHandler
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreen(loginViewModel: LoginViewModel = viewModel()) {
+fun LoginScreen(
+    auth: GoogleAuthUiClient,
+    loginViewModel: LoginViewModel = hiltViewModel(),
+) {
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult(),
+        onResult = { result ->
+            if (result.resultCode == RESULT_OK) {
+                GlobalScope.launch {
+                    val signInResult = auth.signInWithIntent(
+                        intent = result.data ?: return@launch
+                    )
+                    loginViewModel.onSignInResult(signInResult)
+                }
+            }
+        }
+    )
+
     Box(
         modifier = Modifier
             .fillMaxSize(),
@@ -68,25 +92,32 @@ fun LoginScreen(loginViewModel: LoginViewModel = viewModel()) {
                 Spacer(modifier = Modifier.height(20.dp))
                 UnderlineTextComponent(value = stringResource(id = R.string.forgot_password))
 
-                Spacer(modifier = Modifier.height(40.dp))
-                ButtonComponent(
-                    value = stringResource(id = R.string.login),
-                    onButtonClicker = {
-                        loginViewModel.onEvent(LoginUIEvent.LoginButtonClick)
-                    },
-                    isEnable = loginViewModel.allValidationsPassed.value
-                )
-                Spacer(modifier = Modifier.height(40.dp))
-                ButtonComponent(
-                    value = stringResource(id = R.string.login),
-                    onButtonClicker = {
-                        loginViewModel.onEvent(LoginUIEvent.LoginButtonClick)
-                    },
-                    isEnable = loginViewModel.allValidationsPassed.value
-                )
-
                 Spacer(modifier = Modifier.height(20.dp))
+                ButtonComponent(
+                    value = stringResource(id = R.string.login),
+                    onButtonClicker = {
+                        loginViewModel.onEvent(LoginUIEvent.LoginButtonClick)
+                    },
+                    isEnable = loginViewModel.allValidationsPassed.value
+                )
+                Spacer(modifier = Modifier.height(10.dp))
                 DividerComponent()
+                Spacer(modifier = Modifier.height(5.dp))
+                ButtonComponentLoginWithGoogle(
+                    value = stringResource(id = R.string.login_with_google),
+                    onButtonClicker = {
+                        GlobalScope.launch {
+                            val signInIntentSender = auth.loginWithGoogle()
+                            launcher.launch(
+                                IntentSenderRequest.Builder(
+                                    signInIntentSender ?: return@launch
+                                ).build()
+                            )
+                        }
+                    },
+                    isEnable = true
+                )
+                Spacer(modifier = Modifier.height(20.dp))
                 ClickableLoginTextComponent(
                     tryingToLogin = false,
                     onTextSelected = {
@@ -104,10 +135,4 @@ fun LoginScreen(loginViewModel: LoginViewModel = viewModel()) {
     SystemBackButtonHandler {
         AppRouter.navigateTo(Screen.RegisterScreen)
     }
-}
-
-@Preview
-@Composable
-fun LoginScreenPreview() {
-    LoginScreen()
 }

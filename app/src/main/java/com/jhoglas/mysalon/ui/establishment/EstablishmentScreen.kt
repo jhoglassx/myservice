@@ -7,10 +7,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jhoglas.mysalon.R
+import com.jhoglas.mysalon.network.GoogleAuthUiClient
 import com.jhoglas.mysalon.ui.compoment.BannerComponent
 import com.jhoglas.mysalon.ui.compoment.NavigationDrawerComponent
 import com.jhoglas.mysalon.ui.compoment.ProfessionalsComponent
@@ -18,16 +18,14 @@ import com.jhoglas.mysalon.ui.compoment.ScheduleButtonComponent
 import com.jhoglas.mysalon.ui.compoment.ScheduleDateComponent
 import com.jhoglas.mysalon.ui.compoment.ScheduleHourComponent
 import com.jhoglas.mysalon.ui.compoment.ServicesComponent
-import com.jhoglas.mysalon.ui.home.HomeViewModel
 import com.jhoglas.mysalon.ui.navigation.AppRouter
 import com.jhoglas.mysalon.ui.navigation.Screen
 import com.jhoglas.mysalon.ui.navigation.SystemBackButtonHandler
 import com.jhoglas.mysalon.utils.extensions.getDayFromDate
 
-@Preview
 @Composable
 fun EstablishmentScreen(
-    homeViewModel: HomeViewModel = viewModel(),
+    auth: GoogleAuthUiClient,
     establishmentViewModel: EstablishmentViewModel = viewModel(),
 ) {
     val establishmentId = AppRouter.bundle?.getString("establishmentId") ?: ""
@@ -44,40 +42,42 @@ fun EstablishmentScreen(
 
     NavigationDrawerComponent(
         screenName = R.string.establishment,
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            establishment?.let {
-                BannerComponent(it)
-                Spacer(modifier = Modifier.height(8.dp))
-                ServicesComponent(establishmentServices) { service ->
-                    establishmentViewModel.serviceUpdate(service)
+        content = {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                establishment?.let {
+                    BannerComponent(it)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    ServicesComponent(establishmentServices) { service ->
+                        establishmentViewModel.serviceUpdate(service)
+                    }
                 }
-            }
-            professionals?.let {
+                professionals?.let {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    ProfessionalsComponent(it) { professional ->
+                        establishmentViewModel.professionalUpdate(professional)
+                        establishmentViewModel.scheduleDates(professional.id)
+                    }
+                }
                 Spacer(modifier = Modifier.height(16.dp))
-                ProfessionalsComponent(it) { professional ->
-                    establishmentViewModel.professionalUpdate(professional)
-                    establishmentViewModel.scheduleDates(professional.id)
+                ScheduleDateComponent(scheduleDates) { scheduleDate ->
+                    establishmentViewModel.scheduleDateUpdate(scheduleDate)
+                    establishmentViewModel.listScheduleHours(scheduleDate.date.getDayFromDate())
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                ScheduleHourComponent(scheduleHours) { scheduleHour ->
+                    establishmentViewModel.scheduleHourUpdate(scheduleHour)
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                ScheduleButtonComponent(scheduleBottomIsEnabled) {
+                    establishmentViewModel.scheduleBottomClick()
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp))
-            ScheduleDateComponent(scheduleDates) { scheduleDate ->
-                establishmentViewModel.scheduleDateUpdate(scheduleDate)
-                establishmentViewModel.listScheduleHours(scheduleDate.date.getDayFromDate())
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            ScheduleHourComponent(scheduleHours) { scheduleHour ->
-                establishmentViewModel.scheduleHourUpdate(scheduleHour)
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            ScheduleButtonComponent(scheduleBottomIsEnabled) {
-                establishmentViewModel.scheduleBottomClick()
-            }
-        }
-    }
+        },
+        auth = auth,
+    )
 
     SystemBackButtonHandler {
         AppRouter.navigateTo(Screen.HomeScreen)

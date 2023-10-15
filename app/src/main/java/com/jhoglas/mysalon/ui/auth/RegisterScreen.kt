@@ -14,10 +14,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jhoglas.mysalon.R
+import com.jhoglas.mysalon.network.GoogleAuthUiClient
 import com.jhoglas.mysalon.ui.compoment.ButtonComponent
 import com.jhoglas.mysalon.ui.compoment.CheckboxComponent
 import com.jhoglas.mysalon.ui.compoment.ClickableLoginTextComponent
@@ -32,7 +32,10 @@ import com.jhoglas.mysalon.ui.navigation.Screen
 import com.jhoglas.mysalon.ui.navigation.SystemBackButtonHandler
 
 @Composable
-fun RegisterScreen(registerViewModel: RegisterViewModel = viewModel()) {
+fun RegisterScreen(
+    auth: GoogleAuthUiClient,
+    registerViewModel: RegisterViewModel = viewModel()
+) {
     Box(
         modifier = Modifier
             .fillMaxSize(),
@@ -115,10 +118,4 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = viewModel()) {
     SystemBackButtonHandler {
         AppRouter.navigateTo(Screen.LoginScreen)
     }
-}
-
-@Preview
-@Composable
-fun RegisterPreview() {
-    RegisterScreen()
 }
