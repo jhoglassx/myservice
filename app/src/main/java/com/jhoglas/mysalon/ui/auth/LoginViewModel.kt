@@ -9,10 +9,14 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.jhoglas.mysalon.ui.home.HomeViewModel
+import com.jhoglas.mysalon.ui.entity.ScreenState
+import com.jhoglas.mysalon.ui.entity.State
 import com.jhoglas.mysalon.ui.navigation.AppRouter
 import com.jhoglas.mysalon.ui.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -23,81 +27,52 @@ class LoginViewModel @Inject constructor() : ViewModel() {
     private val auth = Firebase.auth
     private val database = Firebase.database
 
-    private val TAG = LoginViewModel::class.simpleName
-
-    var loginUIState = mutableStateOf(LoginUIState())
     val allValidationsPassed = mutableStateOf(false)
 
-    var loginInProgress = mutableStateOf(false)
+    private val _loginState = MutableStateFlow(ScreenState())
+    val loginState = _loginState.asStateFlow()
+    val loginStateEmail = mutableStateOf(ScreenState())
+    val loginStatePassword = mutableStateOf(ScreenState())
     var userDataState = mutableStateOf(UserData())
         private set
 
-    fun onEvent(event: LoginUIEvent) {
-        viewModelScope.launch {
-            when (event) {
-                is LoginUIEvent.EmailChange -> {
-                    loginUIState.value = loginUIState.value.copy(email = event.email)
-                }
-
-                is LoginUIEvent.PasswordChange -> {
-                    loginUIState.value = loginUIState.value.copy(password = event.password) }
-
-                is LoginUIEvent.LoginButtonClick -> {
-                    loginWithEmail()
-                }
-            }
-            validateFields()
-        }
+    fun emailChange(value: String) {
+        loginStateEmail.value = loginStateEmail.value.copy(content = value)
+        validateFields()
     }
 
-    fun onSignInResult(signInResult: SignInResult) {
-        if (signInResult.data != null) {
+    fun passwordChange(value: String) {
+        loginStatePassword.value = loginStatePassword.value.copy(content = value)
+        validateFields()
+    }
+
+    fun onSignInResult(screenState: ScreenState) {
+        if (screenState.content != null && screenState.state == State.SUCCESS) {
             Log.d(TAG, "Login successful")
+            _loginState.value = screenState
             AppRouter.navigateTo(Screen.HomeScreen)
         } else {
-            Log.d(TAG, "Login failed: ${signInResult.errorMessage}")
+            Log.d(TAG, "Login failed: ${screenState.message}")
         }
     }
 
     private fun validateFields() {
-        val emailResult = Validator.validateEmail(loginUIState.value.email)
-        val passwordResult = Validator.validatePassword(loginUIState.value.password)
+        val emailResult = Validator.validateEmail(loginStateEmail.value.content.toString())
+        val passwordResult = Validator.validatePassword(loginStatePassword.value.content.toString())
 
-        loginUIState.value = loginUIState.value.copy(
-            emailError = ValidateResult(
-                status = emailResult.status,
-                message = emailResult.message
-            ),
-            passwordError = ValidateResult(
-                status = passwordResult.status,
-                message = passwordResult.message
-            )
+        loginStateEmail.value = loginStateEmail.value.copy(
+            message = emailResult.message,
+            state = if (emailResult.status) State.SUCCESS else State.ERROR,
+        )
+
+        loginStatePassword.value = loginStatePassword.value.copy(
+            message = passwordResult.message,
+            state = if (passwordResult.status) State.SUCCESS else State.ERROR,
         )
 
         allValidationsPassed.value = emailResult.status && passwordResult.status
     }
 
-    private fun loginWithEmail() {
-        Log.d(TAG, "Logging in...")
-        loginInProgress.value = true
-        auth.signInWithEmailAndPassword(
-            loginUIState.value.email,
-            loginUIState.value.password
-        )
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
-                    Log.d(TAG, "Login successful ${it.isSuccessful}")
-                    loginInProgress.value = false
-                    AppRouter.navigateTo(Screen.HomeScreen)
-                } else {
-                    loginInProgress.value = false
-                    Log.d(TAG, "Login failed")
-                }
-            }
-            .addOnFailureListener {
-                Log.d(TAG, "Login failed: ${it.message}")
-            }
-    }
     val isUserLoggedIn: MutableLiveData<Boolean> = MutableLiveData()
 
     fun checkForActiveSession() {
@@ -105,10 +80,10 @@ class LoginViewModel @Inject constructor() : ViewModel() {
         val currentUser = firebaseAuth.currentUser
 
         if (currentUser != null) {
-            Log.d(HomeViewModel.TAG, "Valid session")
+            Log.d(TAG, "Valid session")
             isUserLoggedIn.value = true
         } else {
-            Log.d(HomeViewModel.TAG, "Invalid session")
+            Log.d(TAG, "Invalid session")
             isUserLoggedIn.value = false
         }
     }
@@ -133,5 +108,15 @@ class LoginViewModel @Inject constructor() : ViewModel() {
                 e.printStackTrace()
             }
         }
+    }
+
+    fun loadingScreen() {
+        _loginState.update {
+            it.copy(state = State.LOADING)
+        }
+    }
+
+    companion object {
+        const val TAG = "LoginViewModel"
     }
 }

@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,7 +19,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jhoglas.mysalon.R
-import com.jhoglas.mysalon.network.GoogleAuthUiClient
 import com.jhoglas.mysalon.ui.compoment.ButtonComponent
 import com.jhoglas.mysalon.ui.compoment.CheckboxComponent
 import com.jhoglas.mysalon.ui.compoment.ClickableLoginTextComponent
@@ -27,15 +28,20 @@ import com.jhoglas.mysalon.ui.compoment.HeadingTextComponent
 import com.jhoglas.mysalon.ui.compoment.NormalTextComponent
 import com.jhoglas.mysalon.ui.compoment.PasswordFieldComponent
 import com.jhoglas.mysalon.ui.compoment.TextFieldComponent
+import com.jhoglas.mysalon.ui.entity.State
 import com.jhoglas.mysalon.ui.navigation.AppRouter
 import com.jhoglas.mysalon.ui.navigation.Screen
 import com.jhoglas.mysalon.ui.navigation.SystemBackButtonHandler
 
 @Composable
 fun RegisterScreen(
-    auth: GoogleAuthUiClient,
-    registerViewModel: RegisterViewModel = viewModel()
+    registerViewModel: RegisterViewModel = viewModel(),
 ) {
+    val registerState by registerViewModel.registerState.collectAsState()
+    val emailState = registerViewModel.emailState.value
+    val passwordState = registerViewModel.passwordState.value
+    val nameState = registerViewModel.nameState.value
+
     Box(
         modifier = Modifier
             .fillMaxSize(),
@@ -57,35 +63,24 @@ fun RegisterScreen(
                 TextFieldComponent(
                     stringResource(id = R.string.first_name),
                     onTextSelected = {
-                        registerViewModel.onEvent(RegisterUIEvent.FirstNameChange(it))
+                        registerViewModel.nameChange(it)
                     },
-                    error = registerViewModel.registerUIState.value.firstNameError
+                    screenState = nameState
                 )
-                TextFieldComponent(
-                    stringResource(id = R.string.last_name),
-                    onTextSelected = {
-                        registerViewModel.onEvent(RegisterUIEvent.LastNameChange(it))
-                    },
-                    error = registerViewModel.registerUIState.value.lastNameError
-                )
-                // Spacer(modifier = Modifier.height(20.dp))
                 EmailFieldComponent(
                     stringResource(id = R.string.email),
                     onTextSelected = {
-                        registerViewModel.onEvent(RegisterUIEvent.EmailChange(it))
+                        registerViewModel.emailChange(it)
                     },
-                    error = registerViewModel.registerUIState.value.emailError
+                    screenState = emailState
                 )
-                // EmailFieldComponent(stringResource(id = R.string.re_email))
-                // Spacer(modifier = Modifier.height(20.dp))
                 PasswordFieldComponent(
                     stringResource(id = R.string.password),
                     onTextSelected = {
-                        registerViewModel.onEvent(RegisterUIEvent.PasswordChange(it))
+                        registerViewModel.passwordChange(it)
                     },
-                    error = registerViewModel.registerUIState.value.passwordError
+                    screenState = passwordState
                 )
-                // PasswordFieldComponent(stringResource(id = R.string.re_password))
                 CheckboxComponent(
                     onTextSelected = {
                         AppRouter.navigateTo(
@@ -93,14 +88,17 @@ fun RegisterScreen(
                         )
                     },
                     onCheckedChange = {
-                        registerViewModel.onEvent(RegisterUIEvent.PrivacyPolicyCheckChange(it))
+                        registerViewModel.privacyPolicyCheckChange(it)
                     }
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 ButtonComponent(
                     value = stringResource(id = R.string.register),
                     onButtonClicker = {
-                        registerViewModel.onEvent(RegisterUIEvent.RegisterButtonClick)
+                        registerViewModel.registerButtonClick()
+                        if (registerState.state == State.SUCCESS) {
+                            AppRouter.navigateTo(Screen.HomeScreen)
+                        }
                     },
                     isEnable = registerViewModel.allValidationsPassed.value
                 )
@@ -110,7 +108,7 @@ fun RegisterScreen(
                 })
             }
         }
-        if (registerViewModel.registerInProgress.value) {
+        if (registerState.state == State.LOADING) {
             CircularProgressIndicator()
         }
     }

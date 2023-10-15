@@ -5,32 +5,18 @@ import com.jhoglas.mysalon.utils.extensions.hasUppercase
 import com.jhoglas.mysalon.utils.extensions.isValidEmail
 
 object Validator {
-    fun validateFirstName(firstName: String) = when {
-        firstName.isNullOrEmpty() -> ValidateResult(
+    fun validateFirstName(name: String) = when {
+        name.isNullOrEmpty() -> ValidateResult(
             status = false,
-            message = "First name is not empty",
+            message = "name is not empty",
         )
 
-        firstName.length < 1 -> ValidateResult(
+        name.length < 5 -> ValidateResult(
             status = false,
-            message = "First name must contain 1 or more digits",
+            message = "name must contain 5 or more digits",
         )
 
         else -> ValidateResult(status = true, message = "First name is valid")
-    }
-
-    fun validateLastName(lastName: String) = when {
-        lastName.isNullOrEmpty() -> ValidateResult(
-            status = false,
-            message = "Last name is not empty",
-        )
-
-        lastName.length < 1 -> ValidateResult(
-            status = false,
-            message = "Last name must contain 1 or more digits",
-        )
-
-        else -> ValidateResult(status = true, message = "Last name is valid")
     }
 
     fun validateEmail(email: String) = when {

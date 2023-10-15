@@ -6,121 +6,129 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.jhoglas.mysalon.ui.entity.ScreenState
+import com.jhoglas.mysalon.ui.entity.State
 import com.jhoglas.mysalon.ui.navigation.AppRouter
 import com.jhoglas.mysalon.ui.navigation.Screen
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import java.util.Date
 
 class RegisterViewModel : ViewModel() {
 
-    private val TAG = RegisterViewModel::class.simpleName
-    var registerUIState = mutableStateOf(RegisterUIState())
     val allValidationsPassed = mutableStateOf(false)
-    val registerInProgress = mutableStateOf(false)
+
+    private val _registerState = MutableStateFlow(ScreenState())
+    val registerState = _registerState.asStateFlow()
+    val emailState = mutableStateOf(ScreenState())
+    val passwordState = mutableStateOf(ScreenState())
+    val nameState = mutableStateOf(ScreenState())
+    private val policyState = mutableStateOf(ScreenState())
 
     private val auth = Firebase.auth
     private val database = Firebase.database
-
-    fun onEvent(event: RegisterUIEvent) {
-        when (event) {
-            is RegisterUIEvent.FirstNameChange -> {
-                registerUIState.value = registerUIState.value.copy(firstName = event.firstName)
-            }
-            is RegisterUIEvent.LastNameChange -> {
-                registerUIState.value = registerUIState.value.copy(lastName = event.lastName)
-            }
-            is RegisterUIEvent.EmailChange -> {
-                registerUIState.value = registerUIState.value.copy(email = event.email)
-            }
-            is RegisterUIEvent.PasswordChange -> {
-                registerUIState.value = registerUIState.value.copy(password = event.password)
-            }
-            is RegisterUIEvent.RegisterButtonClick -> {
-                register()
-            }
-            is RegisterUIEvent.PrivacyPolicyCheckChange -> {
-                registerUIState.value = registerUIState.value.copy(privacyPolicyAccepted = event.isChecked)
-            }
-        }
-        validateFields()
-    }
 
     private fun register() {
         Log.d(TAG, "Registering...")
         createUserInFirebase()
     }
 
+    fun nameChange(value: String) {
+        nameState.value = nameState.value.copy(content = value)
+        validateFields()
+    }
+
+    fun emailChange(value: String) {
+        emailState.value = emailState.value.copy(content = value)
+        validateFields()
+    }
+
+    fun passwordChange(value: String) {
+        passwordState.value = passwordState.value.copy(content = value)
+        validateFields()
+    }
+
+    fun privacyPolicyCheckChange(value: Boolean) {
+        policyState.value = policyState.value.copy(content = value)
+        validateFields()
+    }
+
+    fun registerButtonClick() {
+        _registerState.value = ScreenState(state = State.LOADING)
+        register()
+        AppRouter.navigateTo(Screen.RegisterScreen)
+    }
+
     private fun validateFields() {
-        val firstNameResult = Validator.validateFirstName(registerUIState.value.firstName)
-        val lastNameResult = Validator.validateLastName(registerUIState.value.lastName)
-        val emailResult = Validator.validateEmail(registerUIState.value.email)
-        val passwordResult = Validator.validatePassword(registerUIState.value.password)
-        val privacyPolicyResult = Validator.validatePrivacyPolicyAcceptance(registerUIState.value.privacyPolicyAccepted)
+        val firstNameResult = Validator.validateFirstName(nameState.value.content.toString())
+        val emailResult = Validator.validateEmail(emailState.value.content.toString())
+        val passwordResult = Validator.validatePassword(passwordState.value.content.toString())
+        val privacyPolicyResult = Validator.validatePrivacyPolicyAcceptance(policyState.value.content is Boolean)
 
         Log.d(TAG, "ValidateFields:")
         Log.d(TAG, "firstNameResult = $firstNameResult")
-        Log.d(TAG, "lastNameResult = $lastNameResult")
         Log.d(TAG, "emailResult = $emailResult")
         Log.d(TAG, "passwordResult = $passwordResult")
         Log.d(TAG, "privacyPolicyResult = $privacyPolicyResult")
 
-        registerUIState.value = registerUIState.value.copy(
-            firstNameError = ValidateResult(
-                status = firstNameResult.status,
-                message = firstNameResult.message
-            ),
-            lastNameError = ValidateResult(
-                status = lastNameResult.status,
-                message = lastNameResult.message
-            ),
-            emailError = ValidateResult(
-                status = emailResult.status,
-                message = emailResult.message
-            ),
-            passwordError = ValidateResult(
-                status = passwordResult.status,
-                message = passwordResult.message
-            ),
-            privacyPolicyError = ValidateResult(
-                status = privacyPolicyResult.status,
-                message = privacyPolicyResult.message
-            )
+        nameState.value = nameState.value.copy(
+            state = if (firstNameResult.status) State.SUCCESS else State.ERROR,
+            message = firstNameResult.message
+        )
+        emailState.value = emailState.value.copy(
+            state = if (emailResult.status) State.SUCCESS else State.ERROR,
+            message = emailResult.message
+        )
+        passwordState.value = passwordState.value.copy(
+            state = if (passwordResult.status) State.SUCCESS else State.ERROR,
+            message = passwordResult.message
+        )
+        policyState.value = policyState.value.copy(
+            state = if (privacyPolicyResult.status) State.SUCCESS else State.ERROR,
+            message = privacyPolicyResult.message
         )
 
         allValidationsPassed.value = firstNameResult.status &&
-            lastNameResult.status &&
             emailResult.status &&
             passwordResult.status &&
             privacyPolicyResult.status
     }
 
     private fun createUserInFirebase() {
-        registerInProgress.value = true
-
+        _registerState.update {
+            it.copy(state = State.LOADING)
+        }
         val userData = UserData(
-            name = registerUIState.value.firstName,
-            email = registerUIState.value.email,
-            phoneNumber = registerUIState.value.email,
+            name = nameState.value.content.toString(),
+            email = emailState.value.content.toString(),
+            phoneNumber = emailState.value.content.toString(),
             image = "",
             dateCreate = Date().toString(),
             dateUpdate = Date().toString()
         )
 
         auth.createUserWithEmailAndPassword(
-            registerUIState.value.email,
-            registerUIState.value.password
+            emailState.value.content.toString(),
+            passwordState.value.content.toString()
         )
             .addOnCompleteListener {
                 Log.d(TAG, "Firebase addOnCompleteListener: ${it.isSuccessful}")
-                registerInProgress.value = false
                 if (it.isSuccessful) {
                     database.getReference("accounts")
                         .child(auth.currentUser?.uid ?: "")
                         .setValue(userData)
-                    AppRouter.navigateTo(Screen.HomeScreen)
+                }
+                _registerState.update { screenState ->
+                    screenState.copy(state = State.SUCCESS)
                 }
             }
             .addOnFailureListener {
                 Log.d(TAG, "Firebase addOnFailureListener: ${it.localizedMessage}")
             }
+    }
+
+    companion object {
+        const val TAG = "RegisterViewModel"
     }
 }

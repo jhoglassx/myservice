@@ -24,7 +24,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.jhoglas.mysalon.R
-import com.jhoglas.mysalon.ui.auth.ValidateResult
+import com.jhoglas.mysalon.ui.entity.ScreenState
+import com.jhoglas.mysalon.ui.entity.State
 import com.jhoglas.mysalon.ui.theme.BgColor
 import com.jhoglas.mysalon.ui.theme.ErrorColor
 import com.jhoglas.mysalon.ui.theme.Primary
@@ -34,7 +35,7 @@ import com.jhoglas.mysalon.ui.theme.Primary
 fun TextFieldComponent(
     labelValue: String,
     onTextSelected: (String) -> Unit,
-    error: ValidateResult,
+    screenState: ScreenState,
 ) {
     val textValue = remember {
         mutableStateOf("")
@@ -46,7 +47,7 @@ fun TextFieldComponent(
             .clip(shapesComponent.small),
         label = { Text(text = labelValue) },
         supportingText = {
-            if (!error.status) Text(text = error.message, color = ErrorColor)
+            if (screenState.state == State.ERROR) Text(text = screenState.message, color = ErrorColor)
         },
         value = textValue.value,
         colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -65,7 +66,7 @@ fun TextFieldComponent(
         leadingIcon = {
             Icon(painter = painterResource(id = R.drawable.profile), contentDescription = "")
         },
-        isError = !error.status,
+        isError = screenState.state == State.ERROR
     )
 }
 
@@ -74,7 +75,7 @@ fun TextFieldComponent(
 fun EmailFieldComponent(
     labelValue: String,
     onTextSelected: (String) -> Unit,
-    error: ValidateResult,
+    screenState: ScreenState,
 ) {
     val emailValue = remember {
         mutableStateOf("")
@@ -86,7 +87,7 @@ fun EmailFieldComponent(
             .clip(shapesComponent.small),
         label = { Text(text = labelValue) },
         supportingText = {
-            if (!error.status) Text(text = error.message, color = ErrorColor)
+            if (screenState.state == State.ERROR) Text(text = screenState.message, color = ErrorColor)
         },
         value = emailValue.value,
         colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -105,7 +106,7 @@ fun EmailFieldComponent(
         leadingIcon = {
             Icon(painter = painterResource(id = R.drawable.email), contentDescription = "")
         },
-        isError = !error.status
+        isError = screenState.state == State.ERROR
     )
 }
 
@@ -114,7 +115,7 @@ fun EmailFieldComponent(
 fun PasswordFieldComponent(
     labelValue: String,
     onTextSelected: (String) -> Unit,
-    error: ValidateResult,
+    screenState: ScreenState,
 ) {
     val password = remember {
         mutableStateOf("")
@@ -130,7 +131,7 @@ fun PasswordFieldComponent(
                 .clip(shapesComponent.small),
             label = { Text(text = labelValue) },
             supportingText = {
-                if (!error.status) Text(text = error.message, color = ErrorColor)
+                if (screenState.state == State.ERROR) Text(text = screenState.message, color = ErrorColor)
             },
             value = password.value,
             colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -158,7 +159,7 @@ fun PasswordFieldComponent(
                 }
             },
             visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
-            isError = !error.status
+            isError = screenState.state == State.ERROR
         )
     }
 }

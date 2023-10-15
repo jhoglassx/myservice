@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,7 +23,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jhoglas.mysalon.R
-import com.jhoglas.mysalon.network.GoogleAuthUiClient
 import com.jhoglas.mysalon.ui.compoment.ButtonComponent
 import com.jhoglas.mysalon.ui.compoment.ButtonComponentLoginWithGoogle
 import com.jhoglas.mysalon.ui.compoment.ClickableLoginTextComponent
@@ -31,6 +32,7 @@ import com.jhoglas.mysalon.ui.compoment.HeadingTextComponent
 import com.jhoglas.mysalon.ui.compoment.NormalTextComponent
 import com.jhoglas.mysalon.ui.compoment.PasswordFieldComponent
 import com.jhoglas.mysalon.ui.compoment.UnderlineTextComponent
+import com.jhoglas.mysalon.ui.entity.State
 import com.jhoglas.mysalon.ui.navigation.AppRouter
 import com.jhoglas.mysalon.ui.navigation.Screen
 import com.jhoglas.mysalon.ui.navigation.SystemBackButtonHandler
@@ -42,9 +44,14 @@ fun LoginScreen(
     auth: GoogleAuthUiClient,
     loginViewModel: LoginViewModel = hiltViewModel(),
 ) {
+    val loginState by loginViewModel.loginState.collectAsState()
+    val loginStateEmail = loginViewModel.loginStateEmail.value
+    val loginStatePassword = loginViewModel.loginStatePassword.value
+
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult(),
         onResult = { result ->
+            loginViewModel.loadingScreen()
             if (result.resultCode == RESULT_OK) {
                 GlobalScope.launch {
                     val signInResult = auth.signInWithIntent(
@@ -78,16 +85,16 @@ fun LoginScreen(
                 EmailFieldComponent(
                     stringResource(id = R.string.email),
                     onTextSelected = {
-                        loginViewModel.onEvent(LoginUIEvent.EmailChange(it))
+                        loginViewModel.emailChange(it)
                     },
-                    error = loginViewModel.loginUIState.value.emailError
+                    screenState = loginStateEmail
                 )
                 PasswordFieldComponent(
                     stringResource(id = R.string.password),
                     onTextSelected = {
-                        loginViewModel.onEvent(LoginUIEvent.PasswordChange(it))
+                        loginViewModel.passwordChange(it)
                     },
-                    error = loginViewModel.loginUIState.value.passwordError
+                    screenState = loginStatePassword
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 UnderlineTextComponent(value = stringResource(id = R.string.forgot_password))
@@ -96,7 +103,13 @@ fun LoginScreen(
                 ButtonComponent(
                     value = stringResource(id = R.string.login),
                     onButtonClicker = {
-                        loginViewModel.onEvent(LoginUIEvent.LoginButtonClick)
+                        GlobalScope.launch {
+                            val signInResult = auth.loginWithEmail(
+                                email = loginStateEmail.content.toString(),
+                                password = loginStatePassword.content.toString()
+                            )
+                            loginViewModel.onSignInResult(signInResult)
+                        }
                     },
                     isEnable = loginViewModel.allValidationsPassed.value
                 )
@@ -127,7 +140,7 @@ fun LoginScreen(
             }
         }
 
-        if (loginViewModel.loginInProgress.value) {
+        if (loginState.state == State.LOADING) {
             CircularProgressIndicator()
         }
     }

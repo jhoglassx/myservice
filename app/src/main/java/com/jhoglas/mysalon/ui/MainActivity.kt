@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.identity.Identity
-import com.jhoglas.mysalon.network.GoogleAuthUiClient
+import com.jhoglas.mysalon.ui.auth.GoogleAuthUiClient
 import com.jhoglas.mysalon.ui.auth.LoginScreen
 import com.jhoglas.mysalon.ui.auth.LoginViewModel
 import com.jhoglas.mysalon.ui.auth.RegisterScreen
@@ -63,7 +63,7 @@ fun main(
 
             Crossfade(targetState = AppRouter.currentScreen, label = "") { currentState ->
                 when (currentState.value) {
-                    is Screen.RegisterScreen -> RegisterScreen(googleAuthUiClient)
+                    is Screen.RegisterScreen -> RegisterScreen()
                     is Screen.TermsAndConditionsScreen -> TermsAndConditionsScreen()
                     is Screen.LoginScreen -> LoginScreen(googleAuthUiClient)
                     is Screen.HomeScreen -> HomeScreen(googleAuthUiClient)

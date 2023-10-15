@@ -1,4 +1,4 @@
-package com.jhoglas.mysalon.network
+package com.jhoglas.mysalon.ui.auth
 
 import android.content.Context
 import android.content.Intent
@@ -12,8 +12,8 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.jhoglas.mysalon.R
-import com.jhoglas.mysalon.ui.auth.SignInResult
-import com.jhoglas.mysalon.ui.auth.UserData
+import com.jhoglas.mysalon.ui.entity.ScreenState
+import com.jhoglas.mysalon.ui.entity.State
 import com.jhoglas.mysalon.ui.home.HomeViewModel
 import com.jhoglas.mysalon.ui.navigation.AppRouter
 import com.jhoglas.mysalon.ui.navigation.Screen
@@ -28,6 +28,25 @@ class GoogleAuthUiClient(
     private val auth = Firebase.auth
     private val database = Firebase.database
 
+    suspend fun loginWithEmail(email: String, password: String): ScreenState {
+        Log.d(LoginViewModel.TAG, "Logging in...")
+        return try {
+            val resul = auth.signInWithEmailAndPassword(email, password).await()
+            ScreenState(
+                content = resul.user,
+                state = if (resul.user != null) State.SUCCESS else State.ERROR
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.d("Error Login", "Login failed: $e")
+            if (e is CancellationException) throw e else null
+            ScreenState(
+                content = e.message,
+                state = State.ERROR
+            )
+        }
+    }
+
     suspend fun loginWithGoogle(): IntentSender? {
         val result = try {
             oneTapClient.beginSignIn(
@@ -41,7 +60,7 @@ class GoogleAuthUiClient(
         return result?.pendingIntent?.intentSender
     }
 
-    suspend fun signInWithIntent(intent: Intent): SignInResult {
+    suspend fun signInWithIntent(intent: Intent): ScreenState {
         val credential = oneTapClient.getSignInCredentialFromIntent(intent)
         val idToken = credential.googleIdToken
         val googleCredentials = GoogleAuthProvider.getCredential(idToken, null)
@@ -60,17 +79,17 @@ class GoogleAuthUiClient(
                 .child(auth.currentUser?.uid ?: "")
                 .setValue(userData)
 
-            SignInResult(
-                data = userData,
-                errorMessage = null
+            ScreenState(
+                content = userData,
+                state = State.SUCCESS
             )
         } catch (e: Exception) {
+            e.printStackTrace()
             Log.d("Error Login", "Login failed: $e")
             if (e is CancellationException) throw e else null
 
-            SignInResult(
-                data = null,
-                errorMessage = e.message
+            ScreenState(
+                message = e.message ?: "Error"
             )
         }
     }
