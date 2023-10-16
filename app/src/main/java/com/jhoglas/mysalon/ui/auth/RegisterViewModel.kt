@@ -3,12 +3,17 @@ package com.jhoglas.mysalon.ui.auth
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.jhoglas.mysalon.domain.usecase.AuthClientUseCase
 import com.jhoglas.mysalon.ui.entity.ScreenState
 import com.jhoglas.mysalon.ui.entity.State
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
-class RegisterViewModel : ViewModel() {
+class RegisterViewModel(
+    val authClientUseCase: AuthClientUseCase
+) : ViewModel() {
 
     val allValidationsPassed = mutableStateOf(false)
 
@@ -76,6 +81,16 @@ class RegisterViewModel : ViewModel() {
             emailResult.status &&
             passwordResult.status &&
             privacyPolicyResult.status
+    }
+
+    fun registerUserInFirebase(
+        name: String,
+        email: String,
+        password: String
+    ) {
+        viewModelScope.launch {
+            _registerState.value = authClientUseCase.registerUserInFirebase(name, email, password)
+        }
     }
 
     companion object {

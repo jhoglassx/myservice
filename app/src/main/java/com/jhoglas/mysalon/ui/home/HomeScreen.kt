@@ -10,18 +10,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jhoglas.mysalon.R
-import com.jhoglas.mysalon.network.AuthClient
+import com.jhoglas.mysalon.domain.usecase.AuthClientUseCase
 import com.jhoglas.mysalon.ui.compoment.EstablishmentListComponent
 import com.jhoglas.mysalon.ui.compoment.NavigationDrawerComponent
 import com.jhoglas.mysalon.ui.compoment.PromotionsComponent
 
 @Composable
 fun HomeScreen(
-    auth: AuthClient,
     homeViewModel: HomeViewModel = hiltViewModel(),
 ) {
     NavigationDrawerComponent(
-        auth = auth,
         screenName = R.string.home,
     ) {
         Column(

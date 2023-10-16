@@ -9,7 +9,7 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Settings
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.jhoglas.mysalon.domain.getEstablishments
+import com.jhoglas.mysalon.domain.entity.getEstablishments
 import com.jhoglas.mysalon.ui.entity.NavigationItem
 import com.jhoglas.mysalon.ui.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.identity.Identity
-import com.jhoglas.mysalon.network.AuthClient
+import com.jhoglas.mysalon.domain.usecase.AuthClientUseCase
 import com.jhoglas.mysalon.ui.auth.LoginScreen
 import com.jhoglas.mysalon.ui.auth.LoginViewModel
 import com.jhoglas.mysalon.ui.auth.RegisterScreen
@@ -29,24 +29,17 @@ class MainActivity() : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            main(applicationContext)
+            main()
         }
     }
 }
 
 @Composable
 fun main(
-    context: Context,
     loginViewModel: LoginViewModel = hiltViewModel(),
 ) {
-    val googleAuthUiClient by lazy {
-        AuthClient(
-            context = context,
-            oneTapClient = Identity.getSignInClient(context)
-        )
-    }
 
-    googleAuthUiClient.checkForActiveSession()
+    loginViewModel.checkForActiveSession()
     Text(text = "estou aqui")
     MySalonTheme {
         Surface(
@@ -63,11 +56,11 @@ fun main(
 
             Crossfade(targetState = AppRouter.currentScreen, label = "") { currentState ->
                 when (currentState.value) {
-                    is Screen.RegisterScreen -> RegisterScreen(googleAuthUiClient)
+                    is Screen.RegisterScreen -> RegisterScreen()
                     is Screen.TermsAndConditionsScreen -> TermsAndConditionsScreen()
-                    is Screen.LoginScreen -> LoginScreen(googleAuthUiClient)
-                    is Screen.HomeScreen -> HomeScreen(googleAuthUiClient)
-                    is Screen.EstablishmentScreen -> EstablishmentScreen(googleAuthUiClient)
+                    is Screen.LoginScreen -> LoginScreen()
+                    is Screen.HomeScreen -> HomeScreen()
+                    is Screen.EstablishmentScreen -> EstablishmentScreen()
                 }
             }
         }

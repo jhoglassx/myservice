@@ -1,18 +1,27 @@
 package com.jhoglas.mysalon.ui.auth
 
+import android.content.Intent
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.IntentSenderRequest
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.jhoglas.mysalon.domain.usecase.AuthClientUseCase
 import com.jhoglas.mysalon.ui.entity.ScreenState
 import com.jhoglas.mysalon.ui.entity.State
 import com.jhoglas.mysalon.ui.entity.UserData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor() : ViewModel() {
+class LoginViewModel @Inject constructor(
+    private val authClientUseCase: AuthClientUseCase
+) : ViewModel() {
 
     val allValidationsPassed = mutableStateOf(false)
 
@@ -56,8 +65,46 @@ class LoginViewModel @Inject constructor() : ViewModel() {
 
     val isUserLoggedIn: MutableLiveData<Boolean> = MutableLiveData()
 
-    fun setUserData(screenState: ScreenState) {
-        userDataState.value = screenState.content as UserData
+    fun setUserData() {
+        viewModelScope.launch {
+            userDataState.value = authClientUseCase.getSignedInUser().content as UserData
+        }
+    }
+
+    fun checkForActiveSession() {
+        authClientUseCase.checkForActiveSession()
+    }
+
+    fun signInWithIntent(intent: Intent) {
+        viewModelScope.launch {
+            _loginState.value = authClientUseCase.signInWithIntent(intent)
+        }
+    }
+
+    fun loginWithEmail(email: String, password: String) {
+        viewModelScope.launch {
+            _loginState.value = authClientUseCase.loginWithEmail(email, password)
+        }
+    }
+
+    fun loginWithGoogle(
+        launcher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>
+    ) {
+        viewModelScope.launch {
+            val signInIntentSender = authClientUseCase.loginWithGoogle()
+            launcher.launch(
+                IntentSenderRequest.Builder(
+                    signInIntentSender ?: return@launch
+                ).build()
+            )
+        }
+    }
+
+    fun isLoggedUser(): Boolean = authClientUseCase.isLoggedUser()
+    fun signOut() {
+        viewModelScope.launch {
+            authClientUseCase.signOut()
+        }
     }
 
     companion object {

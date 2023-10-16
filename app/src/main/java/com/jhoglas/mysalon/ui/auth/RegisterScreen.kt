@@ -19,7 +19,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jhoglas.mysalon.R
-import com.jhoglas.mysalon.network.AuthClient
 import com.jhoglas.mysalon.ui.compoment.ButtonComponent
 import com.jhoglas.mysalon.ui.compoment.CheckboxComponent
 import com.jhoglas.mysalon.ui.compoment.ClickableLoginTextComponent
@@ -38,7 +37,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterScreen(
-    auth: AuthClient,
     registerViewModel: RegisterViewModel = hiltViewModel(),
 ) {
     val registerState by registerViewModel.registerState.collectAsState()
@@ -101,12 +99,12 @@ fun RegisterScreen(
                     onButtonClicker = {
                         GlobalScope.launch {
                             registerViewModel.loadingScreen(State.LOADING)
-                            val result = auth.registerUserInFirebase(
+                            registerViewModel.registerUserInFirebase(
                                 name = nameState.content.toString(),
                                 email = emailState.content.toString(),
                                 password = passwordState.content.toString(),
                             )
-                            registerViewModel.loadingScreen(result.state)
+                            registerViewModel.loadingScreen(registerState.state)
                         }
                     },
                     isEnable = registerViewModel.allValidationsPassed.value

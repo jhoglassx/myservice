@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.jhoglas.mysalon.domain.ProfessionalDomainEntity
+import com.jhoglas.mysalon.domain.entity.ProfessionalDomainEntity
 import com.jhoglas.mysalon.ui.theme.Primary
 import com.jhoglas.mysalon.ui.theme.PrimarySelected
 

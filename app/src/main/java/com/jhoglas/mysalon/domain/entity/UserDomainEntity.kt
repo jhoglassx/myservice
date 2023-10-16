@@ -1,4 +1,4 @@
-package com.jhoglas.mysalon.domain
+package com.jhoglas.mysalon.domain.entity
 
 data class UserDomainEntity(
     var firstName: String,

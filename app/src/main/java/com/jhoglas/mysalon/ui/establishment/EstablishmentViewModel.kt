@@ -3,16 +3,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.jhoglas.mysalon.domain.EstablishmentDomainEntity
-import com.jhoglas.mysalon.domain.ProfessionalDomainEntity
-import com.jhoglas.mysalon.domain.ScheduleDateDomainEntity
-import com.jhoglas.mysalon.domain.ScheduleEntity
-import com.jhoglas.mysalon.domain.ScheduleHourDomainEntity
-import com.jhoglas.mysalon.domain.ServiceDomainEntity
-import com.jhoglas.mysalon.domain.getEstablishments
-import com.jhoglas.mysalon.domain.getProfessionals
-import com.jhoglas.mysalon.domain.getScheduleDays
-import com.jhoglas.mysalon.domain.getScheduleHours
+import com.jhoglas.mysalon.domain.entity.EstablishmentDomainEntity
+import com.jhoglas.mysalon.domain.entity.ProfessionalDomainEntity
+import com.jhoglas.mysalon.domain.entity.ScheduleDateDomainEntity
+import com.jhoglas.mysalon.domain.entity.ScheduleEntity
+import com.jhoglas.mysalon.domain.entity.ScheduleHourDomainEntity
+import com.jhoglas.mysalon.domain.entity.ServiceDomainEntity
+import com.jhoglas.mysalon.domain.entity.getEstablishments
+import com.jhoglas.mysalon.domain.entity.getProfessionals
+import com.jhoglas.mysalon.domain.entity.getScheduleDays
+import com.jhoglas.mysalon.domain.entity.getScheduleHours
 import java.time.LocalTime
 import java.util.Date
 

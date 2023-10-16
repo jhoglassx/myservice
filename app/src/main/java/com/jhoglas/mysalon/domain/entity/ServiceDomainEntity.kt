@@ -1,4 +1,4 @@
-package com.jhoglas.mysalon.domain
+package com.jhoglas.mysalon.domain.entity
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

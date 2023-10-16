@@ -1,4 +1,4 @@
-package com.jhoglas.mysalon.domain
+package com.jhoglas.mysalon.domain.entity
 
 import java.time.LocalTime
 import java.util.Date

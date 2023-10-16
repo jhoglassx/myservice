@@ -27,7 +27,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -41,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.jhoglas.mysalon.R
-import com.jhoglas.mysalon.network.AuthClient
 import com.jhoglas.mysalon.ui.auth.LoginViewModel
 import com.jhoglas.mysalon.ui.entity.State
 import com.jhoglas.mysalon.ui.home.HomeViewModel
@@ -53,7 +51,6 @@ import kotlinx.coroutines.launch
 fun NavigationDrawerComponent(
     homeViewModel: HomeViewModel = hiltViewModel(),
     loginViewModel: LoginViewModel = hiltViewModel(),
-    auth: AuthClient,
     screenName: Int,
     content: @Composable () -> Unit,
 ) {
@@ -66,9 +63,7 @@ fun NavigationDrawerComponent(
         mutableStateOf(0)
     }
 
-    LaunchedEffect(Unit) {
-        loginViewModel.setUserData(auth.getSignedInUser())
-    }
+    loginViewModel.setUserData()
 
     ModalNavigationDrawer(
         drawerState = scaffoldState,
@@ -81,7 +76,7 @@ fun NavigationDrawerComponent(
                     onClick = {
                         coroutineScope.launch {
                             loginViewModel.loadingScreen(State.LOADING)
-                            auth.signOut()
+                            loginViewModel.signOut()
                             loginViewModel.loadingScreen(State.SUCCESS)
                         }
                     },
@@ -162,7 +157,7 @@ fun NavigationDrawerComponent(
                     onClick = {
                         coroutineScope.launch {
                             loginViewModel.loadingScreen(State.LOADING)
-                            auth.signOut()
+                            loginViewModel.signOut()
                             loginViewModel.loadingScreen(State.SUCCESS)
                         }
                     },
@@ -188,7 +183,7 @@ fun NavigationDrawerComponent(
                         logoutButtonClicked = {
                             coroutineScope.launch {
                                 loginViewModel.loadingScreen(State.LOADING)
-                                auth.signOut()
+                                loginViewModel.signOut()
                                 loginViewModel.loadingScreen(State.SUCCESS)
                             }
                         },

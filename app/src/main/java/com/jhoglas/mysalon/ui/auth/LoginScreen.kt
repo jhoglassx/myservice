@@ -2,7 +2,6 @@ package com.jhoglas.mysalon.ui.auth
 
 import android.app.Activity.RESULT_OK
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -23,7 +22,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jhoglas.mysalon.R
-import com.jhoglas.mysalon.network.AuthClient
 import com.jhoglas.mysalon.ui.compoment.ButtonComponent
 import com.jhoglas.mysalon.ui.compoment.ButtonComponentLoginWithGoogle
 import com.jhoglas.mysalon.ui.compoment.ClickableLoginTextComponent
@@ -37,12 +35,9 @@ import com.jhoglas.mysalon.ui.entity.State
 import com.jhoglas.mysalon.ui.navigation.AppRouter
 import com.jhoglas.mysalon.ui.navigation.Screen
 import com.jhoglas.mysalon.ui.navigation.SystemBackButtonHandler
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
-    auth: AuthClient,
     loginViewModel: LoginViewModel = hiltViewModel(),
 ) {
     val loginState by loginViewModel.loginState.collectAsState()
@@ -53,13 +48,11 @@ fun LoginScreen(
         contract = ActivityResultContracts.StartIntentSenderForResult(),
         onResult = { result ->
             if (result.resultCode == RESULT_OK) {
-                GlobalScope.launch {
-                    loginViewModel.loadingScreen(State.LOADING)
-                    val signInResult = auth.signInWithIntent(
-                        intent = result.data ?: return@launch
-                    )
-                    loginViewModel.loadingScreen(signInResult.state)
-                }
+                loginViewModel.loadingScreen(State.LOADING)
+                loginViewModel.signInWithIntent(
+                    intent = result.data ?: return@rememberLauncherForActivityResult
+                )
+                loginViewModel.loadingScreen(loginState.state)
             }
         }
     )
@@ -104,14 +97,12 @@ fun LoginScreen(
                 ButtonComponent(
                     value = stringResource(id = R.string.login),
                     onButtonClicker = {
-                        GlobalScope.launch {
-                            loginViewModel.loadingScreen(State.LOADING)
-                            val signInResult = auth.loginWithEmail(
-                                email = loginStateEmail.content.toString(),
-                                password = loginStatePassword.content.toString()
-                            )
-                            loginViewModel.loadingScreen(signInResult.state)
-                        }
+                        loginViewModel.loadingScreen(State.LOADING)
+                        loginViewModel.loginWithEmail(
+                            email = loginStateEmail.content.toString(),
+                            password = loginStatePassword.content.toString()
+                        )
+                        loginViewModel.loadingScreen(loginState.state)
                     },
                     isEnable = loginViewModel.allValidationsPassed.value
                 )
@@ -121,14 +112,7 @@ fun LoginScreen(
                 ButtonComponentLoginWithGoogle(
                     value = stringResource(id = R.string.login_with_google),
                     onButtonClicker = {
-                        GlobalScope.launch {
-                            val signInIntentSender = auth.loginWithGoogle()
-                            launcher.launch(
-                                IntentSenderRequest.Builder(
-                                    signInIntentSender ?: return@launch
-                                ).build()
-                            )
-                        }
+                        loginViewModel.loginWithGoogle(launcher)
                     },
                     isEnable = true
                 )
@@ -141,7 +125,7 @@ fun LoginScreen(
                 )
             }
         }
-        if (auth.isLoggedUser() && loginState.state == State.SUCCESS) {
+        if (loginViewModel.isLoggedUser() && loginState.state == State.SUCCESS) {
             AppRouter.navigateTo(Screen.HomeScreen)
         }
 

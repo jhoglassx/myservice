@@ -24,8 +24,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.jhoglas.mysalon.domain.ScheduleDateDomainEntity
-import com.jhoglas.mysalon.domain.ScheduleHourDomainEntity
+import com.jhoglas.mysalon.domain.entity.ScheduleDateDomainEntity
+import com.jhoglas.mysalon.domain.entity.ScheduleHourDomainEntity
 import com.jhoglas.mysalon.ui.theme.Primary
 import com.jhoglas.mysalon.ui.theme.PrimarySelected
 import com.jhoglas.mysalon.utils.extensions.getDayFromDate

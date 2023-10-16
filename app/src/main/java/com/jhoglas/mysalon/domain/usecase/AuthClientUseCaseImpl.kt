@@ -1,4 +1,4 @@
-package com.jhoglas.mysalon.network
+package com.jhoglas.mysalon.domain.usecase
 
 import android.content.Context
 import android.content.Intent
@@ -22,15 +22,16 @@ import com.jhoglas.mysalon.ui.navigation.Screen
 import kotlinx.coroutines.tasks.await
 import java.util.Date
 import java.util.concurrent.CancellationException
+import javax.inject.Inject
 
-class AuthClient(
+class AuthClientUseCaseImpl @Inject constructor(
     private val context: Context,
     private val oneTapClient: SignInClient,
-) {
+) : AuthClientUseCase {
     private val auth = Firebase.auth
     private val database = Firebase.database
 
-    suspend fun loginWithEmail(email: String, password: String): ScreenState {
+    override suspend fun loginWithEmail(email: String, password: String): ScreenState {
         Log.d(LoginViewModel.TAG, "Logging in...")
         return try {
             val resul = auth.signInWithEmailAndPassword(email, password).await()
@@ -49,7 +50,7 @@ class AuthClient(
         }
     }
 
-    suspend fun loginWithGoogle(): IntentSender? {
+    override suspend fun loginWithGoogle(): IntentSender? {
         val result = try {
             oneTapClient.beginSignIn(
                 buildSignInRequest()
@@ -62,7 +63,7 @@ class AuthClient(
         return result?.pendingIntent?.intentSender
     }
 
-    suspend fun signInWithIntent(intent: Intent): ScreenState {
+    override suspend fun signInWithIntent(intent: Intent): ScreenState {
         val credential = oneTapClient.getSignInCredentialFromIntent(intent)
         val idToken = credential.googleIdToken
         val googleCredentials = GoogleAuthProvider.getCredential(idToken, null)
@@ -96,7 +97,7 @@ class AuthClient(
         }
     }
 
-    fun isLoggedUser() = auth.currentUser != null
+    override fun isLoggedUser(): Boolean = auth.currentUser != null
 
     private fun buildSignInRequest(): BeginSignInRequest {
         return BeginSignInRequest.builder()
@@ -111,11 +112,10 @@ class AuthClient(
             .build()
     }
 
-    suspend fun registerUserInFirebase(
+    override suspend fun registerUserInFirebase(
         name: String,
         email: String,
         password: String,
-
     ): ScreenState {
         val userData = UserData(
             name = name,
@@ -149,7 +149,7 @@ class AuthClient(
         }
     }
 
-    suspend fun signOut() {
+    override suspend fun signOut() {
         try {
             oneTapClient.signOut().await()
             auth.signOut()
@@ -161,7 +161,7 @@ class AuthClient(
         }
     }
 
-    fun checkForActiveSession(): Boolean {
+    override fun checkForActiveSession(): Boolean {
         return if (auth.currentUser != null) {
             Log.d(LoginViewModel.TAG, "Valid session")
             true
@@ -171,7 +171,7 @@ class AuthClient(
         }
     }
 
-    suspend fun getSignedInUser(): ScreenState {
+    override suspend fun getSignedInUser(): ScreenState {
         return try {
             val data = database.getReference("accounts")
                 .child(auth.currentUser?.uid ?: "")
