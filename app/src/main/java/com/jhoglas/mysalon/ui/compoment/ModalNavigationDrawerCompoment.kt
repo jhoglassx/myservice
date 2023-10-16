@@ -27,6 +27,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -56,7 +57,6 @@ fun NavigationDrawerComponent(
     screenName: Int,
     content: @Composable () -> Unit,
 ) {
-    loginViewModel.getSignedInUser()
     val navigationDrawerItems = homeViewModel.navigationItems
     val userDataState by loginViewModel.userDataState
 
@@ -64,6 +64,10 @@ fun NavigationDrawerComponent(
     val coroutineScope = rememberCoroutineScope()
     var selectedItemIndex by rememberSaveable {
         mutableStateOf(0)
+    }
+
+    LaunchedEffect(Unit) {
+        loginViewModel.setUserData(auth.getSignedInUser())
     }
 
     ModalNavigationDrawer(

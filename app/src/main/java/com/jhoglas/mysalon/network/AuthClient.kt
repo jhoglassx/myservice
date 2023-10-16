@@ -160,4 +160,43 @@ class AuthClient(
             if (e is CancellationException) throw e
         }
     }
+
+    fun checkForActiveSession(): Boolean {
+        return if (auth.currentUser != null) {
+            Log.d(LoginViewModel.TAG, "Valid session")
+            true
+        } else {
+            Log.d(LoginViewModel.TAG, "Invalid session")
+            false
+        }
+    }
+
+    suspend fun getSignedInUser(): ScreenState {
+        return try {
+            val data = database.getReference("accounts")
+                .child(auth.currentUser?.uid ?: "")
+                .get()
+                .await()
+
+            val userData = UserData(
+                name = data.child("name")?.value.toString(),
+                email = data.child("email")?.value.toString(),
+                phoneNumber = data.child("phoneNumber")?.value.toString(),
+                image = data.child("image")?.value.toString(),
+                dateCreate = data.child("dateCreate")?.value.toString(),
+                dateUpdate = data.child("dateUpdate")?.value.toString(),
+            )
+
+            ScreenState(
+                content = userData,
+                state = State.SUCCESS
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            ScreenState(
+                state = State.ERROR,
+                message = e.message ?: "Error"
+            )
+        }
+    }
 }

@@ -46,7 +46,7 @@ fun main(
         )
     }
 
-    loginViewModel.checkForActiveSession()
+    googleAuthUiClient.checkForActiveSession()
     Text(text = "estou aqui")
     MySalonTheme {
         Surface(

@@ -1,29 +1,18 @@
 package com.jhoglas.mysalon.ui.auth
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import com.jhoglas.mysalon.ui.entity.ScreenState
 import com.jhoglas.mysalon.ui.entity.State
 import com.jhoglas.mysalon.ui.entity.UserData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor() : ViewModel() {
-
-    private val auth = Firebase.auth
-    private val database = Firebase.database
 
     val allValidationsPassed = mutableStateOf(false)
 
@@ -67,39 +56,8 @@ class LoginViewModel @Inject constructor() : ViewModel() {
 
     val isUserLoggedIn: MutableLiveData<Boolean> = MutableLiveData()
 
-    fun checkForActiveSession() {
-        val firebaseAuth = FirebaseAuth.getInstance()
-        val currentUser = firebaseAuth.currentUser
-
-        if (currentUser != null) {
-            Log.d(TAG, "Valid session")
-            isUserLoggedIn.value = true
-        } else {
-            Log.d(TAG, "Invalid session")
-            isUserLoggedIn.value = false
-        }
-    }
-
-    fun getSignedInUser() {
-        viewModelScope.launch {
-            try {
-                val data = database.getReference("accounts")
-                    .child(auth.currentUser?.uid ?: "")
-                    .get()
-                    .await()
-
-                userDataState.value = UserData(
-                    name = data.child("name")?.value.toString(),
-                    email = data.child("email")?.value.toString(),
-                    phoneNumber = data.child("phoneNumber")?.value.toString(),
-                    image = data.child("image")?.value.toString(),
-                    dateCreate = data.child("dateCreate")?.value.toString(),
-                    dateUpdate = data.child("dateUpdate")?.value.toString(),
-                )
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
+    fun setUserData(screenState: ScreenState) {
+        userDataState.value = screenState.content as UserData
     }
 
     companion object {
