@@ -1,4 +1,4 @@
-package com.jhoglas.mysalon.ui.auth
+package com.jhoglas.mysalon.network
 
 import android.content.Context
 import android.content.Intent
@@ -12,6 +12,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.jhoglas.mysalon.R
+import com.jhoglas.mysalon.ui.auth.LoginViewModel
 import com.jhoglas.mysalon.ui.entity.ScreenState
 import com.jhoglas.mysalon.ui.entity.State
 import com.jhoglas.mysalon.ui.entity.UserData

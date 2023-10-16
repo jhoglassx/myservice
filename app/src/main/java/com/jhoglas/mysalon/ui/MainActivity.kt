@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.identity.Identity
-import com.jhoglas.mysalon.ui.auth.AuthClient
+import com.jhoglas.mysalon.network.AuthClient
 import com.jhoglas.mysalon.ui.auth.LoginScreen
 import com.jhoglas.mysalon.ui.auth.LoginViewModel
 import com.jhoglas.mysalon.ui.auth.RegisterScreen

@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.jhoglas.mysalon.R
-import com.jhoglas.mysalon.ui.auth.AuthClient
+import com.jhoglas.mysalon.network.AuthClient
 import com.jhoglas.mysalon.ui.auth.LoginViewModel
 import com.jhoglas.mysalon.ui.entity.State
 import com.jhoglas.mysalon.ui.home.HomeViewModel

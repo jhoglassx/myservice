@@ -23,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jhoglas.mysalon.R
+import com.jhoglas.mysalon.network.AuthClient
 import com.jhoglas.mysalon.ui.compoment.ButtonComponent
 import com.jhoglas.mysalon.ui.compoment.ButtonComponentLoginWithGoogle
 import com.jhoglas.mysalon.ui.compoment.ClickableLoginTextComponent
