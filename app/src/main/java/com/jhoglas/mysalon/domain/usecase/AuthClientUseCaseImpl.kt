@@ -7,18 +7,21 @@ import android.util.Log
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.BeginSignInRequest.GoogleIdTokenRequestOptions
 import com.google.android.gms.auth.api.identity.SignInClient
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import com.jhoglas.mysalon.R
+import com.jhoglas.mysalon.data.remote.AuthDataSource
+import com.jhoglas.mysalon.data.remote.toDomain
+import com.jhoglas.mysalon.domain.entity.UserDomainEntity
+import com.jhoglas.mysalon.domain.entity.toRemote
 import com.jhoglas.mysalon.ui.auth.LoginViewModel
 import com.jhoglas.mysalon.ui.entity.ScreenState
 import com.jhoglas.mysalon.ui.entity.State
-import com.jhoglas.mysalon.ui.entity.UserData
 import com.jhoglas.mysalon.ui.home.HomeViewModel
 import com.jhoglas.mysalon.ui.navigation.AppRouter
 import com.jhoglas.mysalon.ui.navigation.Screen
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import java.util.Date
 import java.util.concurrent.CancellationException
@@ -27,9 +30,9 @@ import javax.inject.Inject
 class AuthClientUseCaseImpl @Inject constructor(
     private val context: Context,
     private val oneTapClient: SignInClient,
+    private val auth: FirebaseAuth,
+    private val authDataSource: AuthDataSource
 ) : AuthClientUseCase {
-    private val auth = Firebase.auth
-    private val database = Firebase.database
 
     override suspend fun loginWithEmail(email: String, password: String): ScreenState {
         Log.d(LoginViewModel.TAG, "Logging in...")
@@ -70,17 +73,18 @@ class AuthClientUseCaseImpl @Inject constructor(
 
         return try {
             val user = auth.signInWithCredential(googleCredentials).await().user
-            val userData = UserData(
+            val userData = UserDomainEntity(
                 name = user?.displayName ?: "",
                 email = user?.email ?: "",
                 phoneNumber = user?.phoneNumber ?: "",
                 image = user?.photoUrl.toString(),
                 dateCreate = Date().toString(),
                 dateUpdate = Date().toString()
-            )
-            database.getReference("accounts")
-                .child(auth.currentUser?.uid ?: "")
-                .setValue(userData)
+            ).toRemote()
+
+            auth.currentUser?.let {
+                authDataSource.setUser(it.uid, userData)
+            }
 
             ScreenState(
                 content = userData,
@@ -116,36 +120,20 @@ class AuthClientUseCaseImpl @Inject constructor(
         name: String,
         email: String,
         password: String,
-    ): ScreenState {
-        val userData = UserData(
+    ): Flow<Boolean> = flow {
+        val user = UserDomainEntity(
             name = name,
             email = email,
             phoneNumber = "31999999999",
             image = "",
             dateCreate = Date().toString(),
             dateUpdate = Date().toString()
-        )
-        return try {
-            val result = auth.createUserWithEmailAndPassword(email, password).await()
-            database.getReference("accounts")
-                .child(auth.currentUser?.uid ?: "")
-                .setValue(userData)
-                .await()
+        ).toRemote()
 
-            ScreenState(
-                content = userData,
-                state = State.SUCCESS,
-                message = result.user?.uid ?: ""
-            )
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Log.d("Error register", "Firebase register error: ${e.message}")
-            if (e is CancellationException) throw e else null
-            ScreenState(
-                content = userData,
-                state = State.ERROR,
-                message = e.message ?: "Error"
-            )
+        val result = auth.createUserWithEmailAndPassword(email, password).await()
+
+        result.user?.uid?.let {
+            authDataSource.setUser(it, user)
         }
     }
 
@@ -161,42 +149,20 @@ class AuthClientUseCaseImpl @Inject constructor(
         }
     }
 
-    override fun checkForActiveSession(): Boolean {
-        return if (auth.currentUser != null) {
+    override fun checkForActiveSession(): Flow<Boolean> = flow {
+        if (auth.currentUser != null) {
             Log.d(LoginViewModel.TAG, "Valid session")
-            true
+            emit(true)
         } else {
             Log.d(LoginViewModel.TAG, "Invalid session")
-            false
+            emit(false)
         }
     }
 
-    override suspend fun getSignedInUser(): ScreenState {
-        return try {
-            val data = database.getReference("accounts")
-                .child(auth.currentUser?.uid ?: "")
-                .get()
-                .await()
-
-            val userData = UserData(
-                name = data.child("name")?.value.toString(),
-                email = data.child("email")?.value.toString(),
-                phoneNumber = data.child("phoneNumber")?.value.toString(),
-                image = data.child("image")?.value.toString(),
-                dateCreate = data.child("dateCreate")?.value.toString(),
-                dateUpdate = data.child("dateUpdate")?.value.toString(),
-            )
-
-            ScreenState(
-                content = userData,
-                state = State.SUCCESS
-            )
-        } catch (e: Exception) {
-            e.printStackTrace()
-            ScreenState(
-                state = State.ERROR,
-                message = e.message ?: "Error"
-            )
+    override suspend fun getSignedInUser(): Flow<UserDomainEntity> = flow {
+        val id = auth.currentUser?.uid ?: ""
+        authDataSource.getUser(id).collect {
+            emit(it.toDomain())
         }
     }
 }

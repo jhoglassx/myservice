@@ -1,18 +1,14 @@
 package com.jhoglas.mysalon.ui
 
-import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.android.gms.auth.api.identity.Identity
-import com.jhoglas.mysalon.domain.usecase.AuthClientUseCase
 import com.jhoglas.mysalon.ui.auth.LoginScreen
 import com.jhoglas.mysalon.ui.auth.LoginViewModel
 import com.jhoglas.mysalon.ui.auth.RegisterScreen
@@ -38,9 +34,7 @@ class MainActivity() : ComponentActivity() {
 fun main(
     loginViewModel: LoginViewModel = hiltViewModel(),
 ) {
-
     loginViewModel.checkForActiveSession()
-    Text(text = "estou aqui")
     MySalonTheme {
         Surface(
             modifier = Modifier.fillMaxSize()

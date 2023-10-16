@@ -8,10 +8,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jhoglas.mysalon.domain.entity.UserDomainEntity
 import com.jhoglas.mysalon.domain.usecase.AuthClientUseCase
 import com.jhoglas.mysalon.ui.entity.ScreenState
 import com.jhoglas.mysalon.ui.entity.State
-import com.jhoglas.mysalon.ui.entity.UserData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,7 +29,7 @@ class LoginViewModel @Inject constructor(
     val loginState = _loginState.asStateFlow()
     val loginStateEmail = mutableStateOf(ScreenState())
     val loginStatePassword = mutableStateOf(ScreenState())
-    var userDataState = mutableStateOf(UserData())
+    var userDataState = mutableStateOf(UserDomainEntity())
         private set
 
     fun emailChange(value: String) {
@@ -67,12 +67,26 @@ class LoginViewModel @Inject constructor(
 
     fun setUserData() {
         viewModelScope.launch {
-            userDataState.value = authClientUseCase.getSignedInUser().content as UserData
+            try {
+                authClientUseCase.getSignedInUser().collect { user ->
+                    userDataState.value = user
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _loginState.value = ScreenState(
+                    state = State.ERROR,
+                    message = e.message ?: "Error"
+                )
+            }
         }
     }
 
     fun checkForActiveSession() {
-        authClientUseCase.checkForActiveSession()
+        viewModelScope.launch {
+            authClientUseCase.checkForActiveSession().collect {
+                isUserLoggedIn.value = it
+            }
+        }
     }
 
     fun signInWithIntent(intent: Intent) {

@@ -7,12 +7,16 @@ import androidx.lifecycle.viewModelScope
 import com.jhoglas.mysalon.domain.usecase.AuthClientUseCase
 import com.jhoglas.mysalon.ui.entity.ScreenState
 import com.jhoglas.mysalon.ui.entity.State
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.concurrent.CancellationException
+import javax.inject.Inject
 
-class RegisterViewModel(
-    val authClientUseCase: AuthClientUseCase
+@HiltViewModel
+class RegisterViewModel @Inject constructor(
+    private val authClientUseCase: AuthClientUseCase
 ) : ViewModel() {
 
     val allValidationsPassed = mutableStateOf(false)
@@ -89,7 +93,23 @@ class RegisterViewModel(
         password: String
     ) {
         viewModelScope.launch {
-            _registerState.value = authClientUseCase.registerUserInFirebase(name, email, password)
+            try {
+                authClientUseCase.registerUserInFirebase(name, email, password).collect {
+                    val state = if (it) State.SUCCESS else State.ERROR
+                    _registerState.value = ScreenState(
+                        state = if (it) State.SUCCESS else State.ERROR,
+                        message = state.toString()
+                    )
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.d("Error register", "Firebase register error: ${e.message}")
+                if (e is CancellationException) throw e else null
+                _registerState.value = ScreenState(
+                    state = State.ERROR,
+                    message = e.message ?: "Error"
+                )
+            }
         }
     }
 

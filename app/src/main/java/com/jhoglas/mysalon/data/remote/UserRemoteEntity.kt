@@ -1,8 +1,8 @@
-package com.jhoglas.mysalon.domain.entity
+package com.jhoglas.mysalon.data.remote
 
-import com.jhoglas.mysalon.data.remote.UserRemoteEntity
+import com.jhoglas.mysalon.domain.entity.UserDomainEntity
 
-data class UserDomainEntity(
+data class UserRemoteEntity(
     val name: String? = null,
     val email: String? = null,
     val phoneNumber: String? = null,
@@ -11,7 +11,7 @@ data class UserDomainEntity(
     val image: String? = null,
 )
 
-fun UserDomainEntity.toRemote() = UserRemoteEntity(
+fun UserRemoteEntity.toDomain() = UserDomainEntity(
     name = name,
     email = email,
     phoneNumber = phoneNumber,

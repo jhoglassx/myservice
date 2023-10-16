@@ -37,7 +37,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterScreen(
-    registerViewModel: RegisterViewModel = hiltViewModel(),
+    registerViewModel: RegisterViewModel = hiltViewModel()
 ) {
     val registerState by registerViewModel.registerState.collectAsState()
     val emailState = registerViewModel.emailState.value
