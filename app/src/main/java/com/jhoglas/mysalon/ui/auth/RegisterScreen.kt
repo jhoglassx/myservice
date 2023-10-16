@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.jhoglas.mysalon.R
 import com.jhoglas.mysalon.ui.compoment.ButtonComponent
 import com.jhoglas.mysalon.ui.compoment.CheckboxComponent
@@ -32,10 +32,13 @@ import com.jhoglas.mysalon.ui.entity.State
 import com.jhoglas.mysalon.ui.navigation.AppRouter
 import com.jhoglas.mysalon.ui.navigation.Screen
 import com.jhoglas.mysalon.ui.navigation.SystemBackButtonHandler
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterScreen(
-    registerViewModel: RegisterViewModel = viewModel(),
+    auth: AuthClient,
+    registerViewModel: RegisterViewModel = hiltViewModel(),
 ) {
     val registerState by registerViewModel.registerState.collectAsState()
     val emailState = registerViewModel.emailState.value
@@ -95,9 +98,14 @@ fun RegisterScreen(
                 ButtonComponent(
                     value = stringResource(id = R.string.register),
                     onButtonClicker = {
-                        registerViewModel.registerButtonClick()
-                        if (registerState.state == State.SUCCESS) {
-                            AppRouter.navigateTo(Screen.HomeScreen)
+                        GlobalScope.launch {
+                            registerViewModel.loadingScreen(State.LOADING)
+                            val result = auth.registerUserInFirebase(
+                                name = nameState.content.toString(),
+                                email = emailState.content.toString(),
+                                password = passwordState.content.toString(),
+                            )
+                            registerViewModel.loadingScreen(result.state)
                         }
                     },
                     isEnable = registerViewModel.allValidationsPassed.value
@@ -107,6 +115,9 @@ fun RegisterScreen(
                     AppRouter.navigateTo(Screen.LoginScreen)
                 })
             }
+        }
+        if (registerState.state == State.SUCCESS) {
+            AppRouter.navigateTo(Screen.HomeScreen)
         }
         if (registerState.state == State.LOADING) {
             CircularProgressIndicator()

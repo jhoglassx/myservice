@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jhoglas.mysalon.R
-import com.jhoglas.mysalon.ui.auth.GoogleAuthUiClient
+import com.jhoglas.mysalon.ui.auth.AuthClient
 import com.jhoglas.mysalon.ui.compoment.BannerComponent
 import com.jhoglas.mysalon.ui.compoment.NavigationDrawerComponent
 import com.jhoglas.mysalon.ui.compoment.ProfessionalsComponent
@@ -25,7 +25,7 @@ import com.jhoglas.mysalon.utils.extensions.getDayFromDate
 
 @Composable
 fun EstablishmentScreen(
-    auth: GoogleAuthUiClient,
+    auth: AuthClient,
     establishmentViewModel: EstablishmentViewModel = viewModel(),
 ) {
     val establishmentId = AppRouter.bundle?.getString("establishmentId") ?: ""

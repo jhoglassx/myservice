@@ -10,14 +10,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jhoglas.mysalon.R
-import com.jhoglas.mysalon.ui.auth.GoogleAuthUiClient
+import com.jhoglas.mysalon.ui.auth.AuthClient
 import com.jhoglas.mysalon.ui.compoment.EstablishmentListComponent
 import com.jhoglas.mysalon.ui.compoment.NavigationDrawerComponent
 import com.jhoglas.mysalon.ui.compoment.PromotionsComponent
 
 @Composable
 fun HomeScreen(
-    auth: GoogleAuthUiClient,
+    auth: AuthClient,
     homeViewModel: HomeViewModel = hiltViewModel(),
 ) {
     NavigationDrawerComponent(

@@ -14,6 +14,7 @@ import com.google.firebase.ktx.Firebase
 import com.jhoglas.mysalon.R
 import com.jhoglas.mysalon.ui.entity.ScreenState
 import com.jhoglas.mysalon.ui.entity.State
+import com.jhoglas.mysalon.ui.entity.UserData
 import com.jhoglas.mysalon.ui.home.HomeViewModel
 import com.jhoglas.mysalon.ui.navigation.AppRouter
 import com.jhoglas.mysalon.ui.navigation.Screen
@@ -21,7 +22,7 @@ import kotlinx.coroutines.tasks.await
 import java.util.Date
 import java.util.concurrent.CancellationException
 
-class GoogleAuthUiClient(
+class AuthClient(
     private val context: Context,
     private val oneTapClient: SignInClient,
 ) {
@@ -94,6 +95,8 @@ class GoogleAuthUiClient(
         }
     }
 
+    fun isLoggedUser() = auth.currentUser != null
+
     private fun buildSignInRequest(): BeginSignInRequest {
         return BeginSignInRequest.builder()
             .setGoogleIdTokenRequestOptions(
@@ -105,6 +108,44 @@ class GoogleAuthUiClient(
             )
             .setAutoSelectEnabled(true)
             .build()
+    }
+
+    suspend fun registerUserInFirebase(
+        name: String,
+        email: String,
+        password: String,
+
+    ): ScreenState {
+        val userData = UserData(
+            name = name,
+            email = email,
+            phoneNumber = "31999999999",
+            image = "",
+            dateCreate = Date().toString(),
+            dateUpdate = Date().toString()
+        )
+        return try {
+            val result = auth.createUserWithEmailAndPassword(email, password).await()
+            database.getReference("accounts")
+                .child(auth.currentUser?.uid ?: "")
+                .setValue(userData)
+                .await()
+
+            ScreenState(
+                content = userData,
+                state = State.SUCCESS,
+                message = result.user?.uid ?: ""
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.d("Error register", "Firebase register error: ${e.message}")
+            if (e is CancellationException) throw e else null
+            ScreenState(
+                content = userData,
+                state = State.ERROR,
+                message = e.message ?: "Error"
+            )
+        }
     }
 
     suspend fun signOut() {

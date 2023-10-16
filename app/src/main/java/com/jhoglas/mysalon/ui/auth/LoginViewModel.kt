@@ -11,12 +11,10 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.jhoglas.mysalon.ui.entity.ScreenState
 import com.jhoglas.mysalon.ui.entity.State
-import com.jhoglas.mysalon.ui.navigation.AppRouter
-import com.jhoglas.mysalon.ui.navigation.Screen
+import com.jhoglas.mysalon.ui.entity.UserData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -46,14 +44,8 @@ class LoginViewModel @Inject constructor() : ViewModel() {
         validateFields()
     }
 
-    fun onSignInResult(screenState: ScreenState) {
-        if (screenState.content != null && screenState.state == State.SUCCESS) {
-            Log.d(TAG, "Login successful")
-            _loginState.value = screenState
-            AppRouter.navigateTo(Screen.HomeScreen)
-        } else {
-            Log.d(TAG, "Login failed: ${screenState.message}")
-        }
+    fun loadingScreen(state: State) {
+        _loginState.value = ScreenState(state = state)
     }
 
     private fun validateFields() {
@@ -107,12 +99,6 @@ class LoginViewModel @Inject constructor() : ViewModel() {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-        }
-    }
-
-    fun loadingScreen() {
-        _loginState.update {
-            it.copy(state = State.LOADING)
         }
     }
 

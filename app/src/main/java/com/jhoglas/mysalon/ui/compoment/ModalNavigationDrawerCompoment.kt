@@ -40,8 +40,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.jhoglas.mysalon.R
-import com.jhoglas.mysalon.ui.auth.GoogleAuthUiClient
+import com.jhoglas.mysalon.ui.auth.AuthClient
 import com.jhoglas.mysalon.ui.auth.LoginViewModel
+import com.jhoglas.mysalon.ui.entity.State
 import com.jhoglas.mysalon.ui.home.HomeViewModel
 import com.jhoglas.mysalon.ui.navigation.AppRouter
 import kotlinx.coroutines.launch
@@ -51,7 +52,7 @@ import kotlinx.coroutines.launch
 fun NavigationDrawerComponent(
     homeViewModel: HomeViewModel = hiltViewModel(),
     loginViewModel: LoginViewModel = hiltViewModel(),
-    auth: GoogleAuthUiClient,
+    auth: AuthClient,
     screenName: Int,
     content: @Composable () -> Unit,
 ) {
@@ -75,7 +76,9 @@ fun NavigationDrawerComponent(
                         .padding(16.dp),
                     onClick = {
                         coroutineScope.launch {
+                            loginViewModel.loadingScreen(State.LOADING)
                             auth.signOut()
+                            loginViewModel.loadingScreen(State.SUCCESS)
                         }
                     },
                 ) {
@@ -154,7 +157,9 @@ fun NavigationDrawerComponent(
                         .padding(16.dp),
                     onClick = {
                         coroutineScope.launch {
+                            loginViewModel.loadingScreen(State.LOADING)
                             auth.signOut()
+                            loginViewModel.loadingScreen(State.SUCCESS)
                         }
                     },
                 ) {
@@ -178,7 +183,9 @@ fun NavigationDrawerComponent(
                         toolbarTitle = stringResource(id = screenName),
                         logoutButtonClicked = {
                             coroutineScope.launch {
+                                loginViewModel.loadingScreen(State.LOADING)
                                 auth.signOut()
+                                loginViewModel.loadingScreen(State.SUCCESS)
                             }
                         },
                         navigationIconClicked = {

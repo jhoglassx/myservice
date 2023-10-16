@@ -41,7 +41,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
-    auth: GoogleAuthUiClient,
+    auth: AuthClient,
     loginViewModel: LoginViewModel = hiltViewModel(),
 ) {
     val loginState by loginViewModel.loginState.collectAsState()
@@ -51,13 +51,13 @@ fun LoginScreen(
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult(),
         onResult = { result ->
-            loginViewModel.loadingScreen()
             if (result.resultCode == RESULT_OK) {
                 GlobalScope.launch {
+                    loginViewModel.loadingScreen(State.LOADING)
                     val signInResult = auth.signInWithIntent(
                         intent = result.data ?: return@launch
                     )
-                    loginViewModel.onSignInResult(signInResult)
+                    loginViewModel.loadingScreen(signInResult.state)
                 }
             }
         }
@@ -104,11 +104,12 @@ fun LoginScreen(
                     value = stringResource(id = R.string.login),
                     onButtonClicker = {
                         GlobalScope.launch {
+                            loginViewModel.loadingScreen(State.LOADING)
                             val signInResult = auth.loginWithEmail(
                                 email = loginStateEmail.content.toString(),
                                 password = loginStatePassword.content.toString()
                             )
-                            loginViewModel.onSignInResult(signInResult)
+                            loginViewModel.loadingScreen(signInResult.state)
                         }
                     },
                     isEnable = loginViewModel.allValidationsPassed.value
@@ -138,6 +139,9 @@ fun LoginScreen(
                     }
                 )
             }
+        }
+        if (auth.isLoggedUser() && loginState.state == State.SUCCESS) {
+            AppRouter.navigateTo(Screen.HomeScreen)
         }
 
         if (loginState.state == State.LOADING) {
