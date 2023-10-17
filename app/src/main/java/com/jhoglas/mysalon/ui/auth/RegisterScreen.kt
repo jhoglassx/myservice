@@ -98,13 +98,11 @@ fun RegisterScreen(
                     value = stringResource(id = R.string.register),
                     onButtonClicker = {
                         GlobalScope.launch {
-                            registerViewModel.loadingScreen(State.LOADING)
                             registerViewModel.registerUserInFirebase(
                                 name = nameState.content.toString(),
                                 email = emailState.content.toString(),
                                 password = passwordState.content.toString(),
                             )
-                            registerViewModel.loadingScreen(registerState.state)
                         }
                     },
                     isEnable = registerViewModel.allValidationsPassed.value

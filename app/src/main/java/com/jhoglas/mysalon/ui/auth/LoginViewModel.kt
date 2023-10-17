@@ -16,6 +16,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.concurrent.CancellationException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -97,7 +98,16 @@ class LoginViewModel @Inject constructor(
 
     fun loginWithEmail(email: String, password: String) {
         viewModelScope.launch {
-            _loginState.value = authClientUseCase.loginWithEmail(email, password)
+            try {
+                _loginState.value = authClientUseCase.loginWithEmail(email, password)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                if (e is CancellationException) throw e else null
+                ScreenState(
+                    content = e.message,
+                    state = State.ERROR
+                )
+            }
         }
     }
 

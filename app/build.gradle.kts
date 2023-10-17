@@ -28,7 +28,7 @@ android {
 
     buildTypes {
         debug {
-            //applicationIdSuffix = ".debug"
+            // applicationIdSuffix = ".debug"
             manifestPlaceholders["usesCleartextTraffic"] = true
         }
         release {
@@ -114,4 +114,10 @@ dependencies {
     // Coil
     implementation("io.coil-kt:coil-compose:2.4.0")
 
+    // Mockk
+    testImplementation("io.mockk:mockk:1.13.8")
+    testImplementation("io.mockk:mockk-android:1.13.8")
+    testImplementation("io.mockk:mockk-agent:1.13.8")
+    testImplementation("io.kotlintest:kotlintest:2.0.7")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
 }

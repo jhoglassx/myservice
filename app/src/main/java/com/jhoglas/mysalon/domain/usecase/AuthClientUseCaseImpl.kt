@@ -14,15 +14,14 @@ import com.jhoglas.mysalon.data.remote.AuthDataSource
 import com.jhoglas.mysalon.data.remote.toDomain
 import com.jhoglas.mysalon.domain.entity.UserDomainEntity
 import com.jhoglas.mysalon.domain.entity.toRemote
-import com.jhoglas.mysalon.ui.auth.LoginViewModel
 import com.jhoglas.mysalon.ui.entity.ScreenState
 import com.jhoglas.mysalon.ui.entity.State
-import com.jhoglas.mysalon.ui.home.HomeViewModel
 import com.jhoglas.mysalon.ui.navigation.AppRouter
 import com.jhoglas.mysalon.ui.navigation.Screen
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import org.jetbrains.annotations.VisibleForTesting
 import java.util.Date
 import java.util.concurrent.CancellationException
 import javax.inject.Inject
@@ -35,22 +34,11 @@ class AuthClientUseCaseImpl @Inject constructor(
 ) : AuthClientUseCase {
 
     override suspend fun loginWithEmail(email: String, password: String): ScreenState {
-        Log.d(LoginViewModel.TAG, "Logging in...")
-        return try {
-            val resul = auth.signInWithEmailAndPassword(email, password).await()
-            ScreenState(
-                content = resul.user,
-                state = if (resul.user != null) State.SUCCESS else State.ERROR
-            )
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Log.d("Error Login", "Login failed: $e")
-            if (e is CancellationException) throw e else null
-            ScreenState(
-                content = e.message,
-                state = State.ERROR
-            )
-        }
+        val resul = auth.signInWithEmailAndPassword(email, password).await()
+        return ScreenState(
+            content = resul.user,
+            state = if (resul.user != null) State.SUCCESS else State.ERROR
+        )
     }
 
     override suspend fun loginWithGoogle(): IntentSender? {
@@ -59,7 +47,6 @@ class AuthClientUseCaseImpl @Inject constructor(
                 buildSignInRequest()
             ).await()
         } catch (e: Exception) {
-            Log.d("Error Login", "Login failed: $e")
             if (e is CancellationException) throw e else null
         }
 
@@ -88,7 +75,7 @@ class AuthClientUseCaseImpl @Inject constructor(
 
             ScreenState(
                 content = userData,
-                state = State.SUCCESS
+                state = if (auth.currentUser == null) State.ERROR else State.SUCCESS
             )
         } catch (e: Exception) {
             e.printStackTrace()
@@ -142,7 +129,6 @@ class AuthClientUseCaseImpl @Inject constructor(
             oneTapClient.signOut().await()
             auth.signOut()
             AppRouter.navigateTo(Screen.LoginScreen)
-            Log.d(HomeViewModel.TAG, "Firebase logout successful")
         } catch (e: Exception) {
             e.printStackTrace()
             if (e is CancellationException) throw e
@@ -151,10 +137,8 @@ class AuthClientUseCaseImpl @Inject constructor(
 
     override fun checkForActiveSession(): Flow<Boolean> = flow {
         if (auth.currentUser != null) {
-            Log.d(LoginViewModel.TAG, "Valid session")
             emit(true)
         } else {
-            Log.d(LoginViewModel.TAG, "Invalid session")
             emit(false)
         }
     }
@@ -165,4 +149,7 @@ class AuthClientUseCaseImpl @Inject constructor(
             emit(it.toDomain())
         }
     }
+
+    @VisibleForTesting
+    fun buildSignInRequestTest() = buildSignInRequest()
 }

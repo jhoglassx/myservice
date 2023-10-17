@@ -93,6 +93,7 @@ class RegisterViewModel @Inject constructor(
         password: String
     ) {
         viewModelScope.launch {
+            loadingScreen(State.LOADING)
             try {
                 authClientUseCase.registerUserInFirebase(name, email, password).collect {
                     val state = if (it) State.SUCCESS else State.ERROR
