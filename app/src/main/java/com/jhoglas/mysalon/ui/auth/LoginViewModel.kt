@@ -135,6 +135,6 @@ class LoginViewModel @Inject constructor(
     }
 
     companion object {
-        const val TAG = "LoginViewModel1"
+        const val TAG = "LoginViewModel"
     }
 }
