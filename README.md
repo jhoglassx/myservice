@@ -1,43 +1,63 @@
-# My Services
+# Project Name
 
-Descrição breve do projeto.
+Brief project description.
 
-## Tecnologias Utilizadas
+## Used Technologies
 
-- Linguagem: Kotlin
-- Arquitetura: MVVM (Model-View-ViewModel)
-- Biblioteca de Injeção de Dependência: Dagger Hilt
-- Banco de Dados: (Opcional - inclua aqui se você estiver usando algum banco de dados)
+- Language: Kotlin
+- Architecture: MVVM (Model-View-ViewModel)
+- Dependency Injection Library: Dagger Hilt
+- Database: (Optional - include here if you are using any database)
 
-## Arquitetura
+## Architecture
 
-Este projeto segue a arquitetura MVVM e utiliza Dagger Hilt para injeção de dependência. A arquitetura é composta pelas seguintes camadas:
+This project follows the MVVM architecture and utilizes Dagger Hilt for dependency injection. The architecture consists of the following layers:
 
-- **Data**: Lida com a fonte de dados, como acesso ao banco de dados, chamadas de API, etc.
-- **Domain**: Contém a lógica de negócios do aplicativo e define os casos de uso.
-- **Presentation**: Responsável pela interface do usuário e pela apresentação dos dados.
-- **DI (Injeção de Dependência)**: Utiliza Dagger Hilt para configurar e fornecer dependências.
+- **Data**: Deals with data sources, such as database access, API calls, etc.
+- **Domain**: Contains the business logic of the application and defines use cases.
+- **Presentation**: Responsible for the user interface and data presentation.
+- **DI (Dependency Injection)**: Uses Dagger Hilt to configure and provide dependencies.
 
-## Estrutura do Projeto
+## Project Structure
 
-Explicação da estrutura de diretórios do projeto.
+Explanation of the project's directory structure.
 
-## Instalação
+## Installation
 
-Instruções para instalar e configurar o projeto localmente:
+Instructions for installing and configuring the project locally:
 
-1. Clone este repositório.
-2. Abra o projeto no Android Studio ou outra IDE compatível com Kotlin.
-3. Build e execute o aplicativo.
+1. Clone this repository.
+2. Open the project in Android Studio or another IDE compatible with Kotlin.
+3. Build and run the application.
 
-## Uso
+## Usage
 
-- Descreva como o aplicativo funciona e como o Dagger Hilt é configurado.
-- Mostre exemplos de injeção de dependência usando Dagger Hilt.
-- Explique como as dependências são definidas no módulo do Dagger Hilt.
+- Describe how the application works and how Dagger Hilt is configured.
+- Provide examples of dependency injection using Dagger Hilt.
+- Explain how dependencies are defined in the Dagger Hilt module.
 
-## Contribuição
+## Contribution
 
-Se você deseja contribuir com este projeto, siga estas diretrizes:
+If you wish to contribute to this project, follow these guidelines:
 
-1
+1. Fork the repository.
+2. Create a branch for your contribution (`git checkout -b feature/your-contribution`).
+3. Make your changes and add tests, if applicable.
+4. Submit a pull request describing your changes clearly and concisely.
+5. Await review and feedback from the development team.
+
+## License
+
+This project is under the MIT License. Refer to the `LICENSE` file for more details.
+
+## Contact
+
+If you have any questions or need support, contact via your@email.com.
+
+## Screenshots
+
+(Optional - include screenshots of your application for demonstration.)
+
+## Roadmap
+
+Describe upcoming steps and planned features for the project, if applicable.
