@@ -4,8 +4,6 @@ import android.content.Intent
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.IntentSenderRequest
-import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jhoglas.mysalon.domain.entity.UserDomainEntity
@@ -16,7 +14,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.util.concurrent.CancellationException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,22 +21,31 @@ class LoginViewModel @Inject constructor(
     private val authClientUseCase: AuthClientUseCase
 ) : ViewModel() {
 
-    val allValidationsPassed = mutableStateOf(false)
+    private val _allValidationsPassed = MutableStateFlow(false)
+    val allValidationsPassed = _allValidationsPassed.asStateFlow()
 
     private val _loginState = MutableStateFlow(ScreenState())
     val loginState = _loginState.asStateFlow()
-    val loginStateEmail = mutableStateOf(ScreenState())
-    val loginStatePassword = mutableStateOf(ScreenState())
-    var userDataState = mutableStateOf(UserDomainEntity())
-        private set
+
+    private val _loginStateEmail = MutableStateFlow(ScreenState())
+    val loginStateEmail = _loginStateEmail.asStateFlow()
+
+    private val _loginStatePassword = MutableStateFlow(ScreenState())
+    val loginStatePassword = _loginStatePassword.asStateFlow()
+
+    private var _userDataState = MutableStateFlow(UserDomainEntity())
+    var userDataState = _userDataState.asStateFlow()
+
+    private var _isUserLoggedIn = MutableStateFlow(false)
+    var isUserLoggedIn = _isUserLoggedIn.asStateFlow()
 
     fun emailChange(value: String) {
-        loginStateEmail.value = loginStateEmail.value.copy(content = value)
+        _loginStateEmail.value = loginStateEmail.value.copy(content = value)
         validateFields()
     }
 
     fun passwordChange(value: String) {
-        loginStatePassword.value = loginStatePassword.value.copy(content = value)
+        _loginStatePassword.value = loginStatePassword.value.copy(content = value)
         validateFields()
     }
 
@@ -51,26 +57,24 @@ class LoginViewModel @Inject constructor(
         val emailResult = Validator.validateEmail(loginStateEmail.value.content.toString())
         val passwordResult = Validator.validatePassword(loginStatePassword.value.content.toString())
 
-        loginStateEmail.value = loginStateEmail.value.copy(
+        _loginStateEmail.value = loginStateEmail.value.copy(
             message = emailResult.message,
             state = if (emailResult.status) State.SUCCESS else State.ERROR,
         )
 
-        loginStatePassword.value = loginStatePassword.value.copy(
+        _loginStatePassword.value = loginStatePassword.value.copy(
             message = passwordResult.message,
             state = if (passwordResult.status) State.SUCCESS else State.ERROR,
         )
 
-        allValidationsPassed.value = emailResult.status && passwordResult.status
+        _allValidationsPassed.value = emailResult.status && passwordResult.status
     }
-
-    val isUserLoggedIn: MutableLiveData<Boolean> = MutableLiveData()
 
     fun setUserData() {
         viewModelScope.launch {
             try {
                 authClientUseCase.getSignedInUser().collect { user ->
-                    userDataState.value = user
+                    _userDataState.value = user
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -85,7 +89,7 @@ class LoginViewModel @Inject constructor(
     fun checkForActiveSession() {
         viewModelScope.launch {
             authClientUseCase.checkForActiveSession().collect {
-                isUserLoggedIn.value = it
+                _isUserLoggedIn.value = it
             }
         }
     }
@@ -102,10 +106,9 @@ class LoginViewModel @Inject constructor(
                 _loginState.value = authClientUseCase.loginWithEmail(email, password)
             } catch (e: Exception) {
                 e.printStackTrace()
-                if (e is CancellationException) throw e else null
-                ScreenState(
-                    content = e.message,
-                    state = State.ERROR
+                _loginState.value = ScreenState(
+                    state = State.ERROR,
+                    message = e.message ?: "Error"
                 )
             }
         }

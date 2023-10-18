@@ -41,8 +41,9 @@ fun LoginScreen(
     loginViewModel: LoginViewModel = hiltViewModel(),
 ) {
     val loginState by loginViewModel.loginState.collectAsState()
-    val loginStateEmail = loginViewModel.loginStateEmail.value
-    val loginStatePassword = loginViewModel.loginStatePassword.value
+    val loginStateEmail by loginViewModel.loginStateEmail.collectAsState()
+    val loginStatePassword by loginViewModel.loginStatePassword.collectAsState()
+    val allValidationsPassed by loginViewModel.allValidationsPassed.collectAsState()
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult(),
@@ -104,7 +105,7 @@ fun LoginScreen(
                         )
                         loginViewModel.loadingScreen(loginState.state)
                     },
-                    isEnable = loginViewModel.allValidationsPassed.value
+                    isEnable = allValidationsPassed
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 DividerComponent()
