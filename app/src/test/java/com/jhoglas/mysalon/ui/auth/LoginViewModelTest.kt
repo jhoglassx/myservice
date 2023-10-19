@@ -13,12 +13,15 @@ import io.kotlintest.matchers.shouldBe
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.runs
 import io.mockk.spyk
 import io.mockk.unmockkAll
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -50,7 +53,7 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `when email is changed, it updates the loginStateEmail and calls validateFields`() = runTest {
+    fun `email is changed, it updates the loginStateEmail and calls validateFields`() = runTest {
         val email = "test@example.com"
         val expected = ScreenState(
             state = State.SUCCESS,
@@ -65,7 +68,7 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `when password is changed, it updates the loginStatePassword and calls validateFields`() = runTest {
+    fun `password is changed, it updates the loginStatePassword and calls validateFields`() = runTest {
         val password = "Password123"
         val expected = ScreenState(state = State.SUCCESS, content = password, message = "Password is valid")
 
@@ -76,7 +79,7 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `when loadingScreen is called, it updates the loginState`() = runTest {
+    fun `loadingScreen is called, it updates the loginState`() = runTest {
         val state = State.LOADING
         val expected = ScreenState(state = state, message = "")
 
@@ -86,7 +89,7 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `when email and password are valid, allValidationsPassed is true`() = runTest {
+    fun `email and password are valid, allValidationsPassed is true`() = runTest {
         val email = "test@example.com"
         val password = "Password123"
         val expectedPassword = ScreenState(state = State.SUCCESS, content = password, message = "Password is valid")
@@ -101,7 +104,7 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `when email and password are invalid, allValidationsPassed is false`() = runTest {
+    fun `email and password are invalid, allValidationsPassed is false`() = runTest {
         val email = "testexample.com"
         val password = "password"
         val expectedPassword = ScreenState(state = State.ERROR, content = password, message = "Password must contain one or more numbers")
@@ -116,7 +119,7 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `when email is invalid, loginStateEmail shows an error state`() = runTest {
+    fun `email is invalid, loginStateEmail shows an error state`() = runTest {
         val email = "testexample.com"
         val expected = ScreenState(content = email, state = State.ERROR, message = "Invalid email")
 
@@ -126,7 +129,7 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `when password is invalid, loginStatePassword shows an error state`() = runTest {
+    fun `password is invalid, loginStatePassword shows an error state`() = runTest {
         val password = "pass"
         val expected = ScreenState(content = password, state = State.ERROR, message = "Password must contain 6 or more digits")
 
@@ -136,7 +139,7 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `when setUserData is called, it updates the userDataState on successful use case call`() = runTest {
+    fun `setUserData is called, it updates the userDataState on successful use case call`() = runTest {
         val user = UserDomainEntity()
         coEvery {
             authClientUseCaseMock.getSignedInUser()
@@ -149,7 +152,7 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `when setUserData is called and use case call fails, it updates the loginState with an error`() = runTest {
+    fun `setUserData is called and use case call fails, it updates the loginState with an error`() = runTest {
         coEvery {
             authClientUseCaseMock.getSignedInUser()
         } throws Exception("Error")
@@ -161,33 +164,56 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `when checkForActiveSession is called, it updates the isUserLoggedIn MutableLiveData with the use case's value`() = runTest {
-        val isUserLoggedIn = true
-        coEvery {
-            authClientUseCaseMock.checkForActiveSession()
-        } returns flowOf(isUserLoggedIn)
+    fun `checkForActiveSession is called and returns true then isUserLoggedIn should be true`() = runTest {
+        coEvery { authClientUseCaseMock.checkForActiveSession() } returns flow { emit(true) }
 
         viewModel.checkForActiveSession()
 
-        viewModel.isUserLoggedIn.value shouldBe isUserLoggedIn
-
-        coVerify(exactly = 1) { authClientUseCaseMock.checkForActiveSession() }
+        viewModel.isUserLoggedIn.value shouldBe true
     }
 
     @Test
-    fun `when signInWithIntent is called, it updates the loginState with the use case's value`() = runTest {
-        val intent: Intent = mockk()
-        val screenState = ScreenState(state = State.EMPTY)
-        coEvery { authClientUseCaseMock.signInWithIntent(any()) } returns screenState
+    fun `checkForActiveSession is called and returns false then isUserLoggedIn should be false`() = runTest {
+        coEvery { authClientUseCaseMock.checkForActiveSession() } returns flow { emit(false) }
 
-        viewModel.signInWithIntent(intent)
+        viewModel.checkForActiveSession()
 
-        viewModel.loginState.value shouldBe screenState
+        viewModel.isUserLoggedIn.value shouldBe false
+    }
+
+    @Test
+    fun `checkForActiveSession is called and throws an error should silently handle it`() = runTest {
+        coEvery { authClientUseCaseMock.checkForActiveSession() } throws Exception("Timeout Error")
+        viewModel.checkForActiveSession()
+    }
+
+    @Test
+    fun `signInWithIntent should set login state if sign-in is successful`() = runTest {
+        val intentMock = mockk<Intent>()
+        val loginStateMock = mockk<ScreenState>()
+        coEvery { authClientUseCaseMock.signInWithIntent(intentMock) } returns loginStateMock
+
+        viewModel.signInWithIntent(intentMock)
+
         coVerify(exactly = 1) { authClientUseCaseMock.signInWithIntent(any()) }
+        viewModel.loginState.value shouldBe loginStateMock
     }
 
     @Test
-    fun `when loginWithEmail is called and the use case call fails, it updates the loginState with an error`() = runTest {
+    fun `signInWithIntent should set error screen state if auth client throws an exception`() = runTest {
+        val intentMock = mockk<Intent>()
+        val exceptionMock = mockk<Exception>(relaxed = true)
+        coEvery { authClientUseCaseMock.signInWithIntent(intentMock) } throws exceptionMock
+
+        viewModel.signInWithIntent(intentMock)
+
+        coVerify(exactly = 1) { authClientUseCaseMock.signInWithIntent(any()) }
+        viewModel.loginState.value?.state shouldBe State.ERROR
+        viewModel.loginState.value?.message shouldBe exceptionMock.message
+    }
+
+    @Test
+    fun `loginWithEmail is called and the use case call fails, it updates the loginState with an error`() = runTest {
         val email = "test@example.com"
         val password = "password123"
         val error = Exception("Error")
@@ -200,7 +226,7 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `when loginWithEmail is called and the use case call succeeds, it updates the loginState with the result`() = runTest {
+    fun `loginWithEmail is called and the use case call succeeds, it updates the loginState with the result`() = runTest {
         val email = "test@example.com"
         val password = "password123"
         val screenState = ScreenState(state = State.SUCCESS)
@@ -213,15 +239,49 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `when loginWithGoogle is called, it launches the provided launcher with the IntentSenderRequest`() = runTest {
+    fun `loginWithGoogle should launch sign-in intent sender successfully`() = runTest {
         val intentSender: IntentSender = mockk()
-        val launcher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult> = mockk(relaxed = true)
+        val launcherMock: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult> = mockk(relaxed = true)
         coEvery { authClientUseCaseMock.loginWithGoogle() } returns intentSender
-        coEvery { launcher.launch(any()) } returns Unit
+        coEvery { launcherMock.launch(any()) } returns Unit
 
-        viewModel.loginWithGoogle(launcher)
+        viewModel.loginWithGoogle(launcherMock)
 
-        coVerify(exactly = 1) { launcher.launch(any()) }
+        coVerify(exactly = 1) { authClientUseCaseMock.loginWithGoogle() }
+        coVerify(exactly = 1) { launcherMock.launch(any()) }
+        viewModel.loginState.value?.message shouldBe ""
+    }
+
+    @Test
+    fun `loginWithGoogle should set error screen state if auth client throws an exception`() = runTest {
+        val exceptionMock = mockk<Exception>(relaxed = true)
+        coEvery {
+            authClientUseCaseMock.loginWithGoogle()
+        } throws exceptionMock
+        val launcherMock = mockk<ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>>(relaxed = true)
+
+        viewModel.loginWithGoogle(launcherMock)
+
+        coVerify { authClientUseCaseMock.loginWithGoogle() }
+        verify(exactly = 0) { launcherMock.launch(any()) }
+        viewModel.loginState.value?.state shouldBe State.ERROR
+        viewModel.loginState.value?.message shouldBe exceptionMock.message
+    }
+
+    @Test
+    fun `loginWithGoogle should do nothing if signInIntentSender is null`() = runTest {
+        coEvery {
+            authClientUseCaseMock.loginWithGoogle()
+        } returns null
+        val launcherMock = mockk<ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>>(relaxed = true)
+        viewModel.loginWithGoogle(launcherMock)
+        coVerify {
+            authClientUseCaseMock.loginWithGoogle()
+        }
+        verify(exactly = 0) {
+            launcherMock.launch(any())
+        }
+        viewModel.loginState.value?.message shouldBe ""
     }
 
     @Test
@@ -236,13 +296,28 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `when signOut is called, it calls the use case's signOut`() = runTest {
+    fun `signOut is called, it calls the use case's signOut`() = runTest {
         coEvery {
             authClientUseCaseMock.signOut()
         } returns Unit
 
         viewModel.signOut()
 
+        coVerify(exactly = 1) { authClientUseCaseMock.signOut() }
+    }
+
+    @Test
+    fun `signOut should call auth client use case and log success message`() = runTest {
+        coEvery { authClientUseCaseMock.signOut() } just runs
+        viewModel.signOut()
+        coVerify(exactly = 1) { authClientUseCaseMock.signOut() }
+    }
+
+    @Test
+    fun `signOut should log error message if auth client throws an exception`() = runTest {
+        val exceptionMock = mockk<Exception>(relaxed = true)
+        coEvery { authClientUseCaseMock.signOut() } throws exceptionMock
+        viewModel.signOut()
         coVerify(exactly = 1) { authClientUseCaseMock.signOut() }
     }
 }

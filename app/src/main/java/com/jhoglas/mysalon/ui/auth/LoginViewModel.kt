@@ -14,6 +14,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -57,6 +58,9 @@ class LoginViewModel @Inject constructor(
         val emailResult = Validator.validateEmail(loginStateEmail.value.content.toString())
         val passwordResult = Validator.validatePassword(loginStatePassword.value.content.toString())
 
+        Timber.tag(TAG).d("validateFields: Email $emailResult")
+        Timber.tag(TAG).d("validateFields: Password $passwordResult")
+
         _loginStateEmail.value = loginStateEmail.value.copy(
             message = emailResult.message,
             state = if (emailResult.status) State.SUCCESS else State.ERROR,
@@ -76,27 +80,45 @@ class LoginViewModel @Inject constructor(
                 authClientUseCase.getSignedInUser().collect { user ->
                     _userDataState.value = user
                 }
+                Timber.tag(TAG).d("setUserData: Success ${_userDataState.value}")
             } catch (e: Exception) {
                 e.printStackTrace()
                 _loginState.value = ScreenState(
                     state = State.ERROR,
                     message = e.message ?: "Error"
                 )
+                Timber.tag(TAG).e("setUserData: Error $e")
             }
         }
     }
 
     fun checkForActiveSession() {
         viewModelScope.launch {
-            authClientUseCase.checkForActiveSession().collect {
-                _isUserLoggedIn.value = it
+            try {
+                authClientUseCase.checkForActiveSession().collect {
+                    _isUserLoggedIn.value = it
+                    Timber.tag(TAG).d("checkForActiveSession: Success ${_isUserLoggedIn.value}")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Timber.tag(TAG).e("checkForActiveSession Error: $e")
             }
         }
     }
 
     fun signInWithIntent(intent: Intent) {
         viewModelScope.launch {
-            _loginState.value = authClientUseCase.signInWithIntent(intent)
+            try {
+                _loginState.value = authClientUseCase.signInWithIntent(intent)
+                Timber.tag(TAG).d("signInWithIntent Success: ${_loginState.value}")
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _loginState.value = ScreenState(
+                    state = State.ERROR,
+                    message = e.message ?: "Error"
+                )
+                Timber.tag(TAG).e("signInWithIntent Error: $e")
+            }
         }
     }
 
@@ -104,12 +126,14 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _loginState.value = authClientUseCase.loginWithEmail(email, password)
+                Timber.tag(TAG).d("loginWithEmail Success: ${_loginState.value}")
             } catch (e: Exception) {
                 e.printStackTrace()
                 _loginState.value = ScreenState(
                     state = State.ERROR,
                     message = e.message ?: "Error"
                 )
+                Timber.tag(TAG).e("loginWithEmail Error: $e")
             }
         }
     }
@@ -118,19 +142,35 @@ class LoginViewModel @Inject constructor(
         launcher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>
     ) {
         viewModelScope.launch {
-            val signInIntentSender = authClientUseCase.loginWithGoogle()
-            launcher.launch(
-                IntentSenderRequest.Builder(
-                    signInIntentSender ?: return@launch
-                ).build()
-            )
+            try {
+                val signInIntentSender = authClientUseCase.loginWithGoogle()
+                launcher.launch(
+                    IntentSenderRequest.Builder(
+                        signInIntentSender ?: return@launch
+                    ).build()
+                )
+                Timber.tag(TAG).d("loginWithGoogle Success:")
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _loginState.value = ScreenState(
+                    state = State.ERROR,
+                    message = e.message ?: "Error"
+                )
+                Timber.tag(TAG).e("loginWithGoogle Error: $e")
+            }
         }
     }
 
     fun isLoggedUser(): Boolean = authClientUseCase.isLoggedUser()
     fun signOut() {
         viewModelScope.launch {
-            authClientUseCase.signOut()
+            try {
+                authClientUseCase.signOut()
+                Timber.tag(TAG).d("signOut Success:")
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Timber.tag(TAG).e("signOut Error: $e")
+            }
         }
     }
 

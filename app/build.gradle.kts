@@ -76,9 +76,9 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.4")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.5.3")
     debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.5.3")
 
     // Firebase
     implementation("com.google.firebase:firebase-auth-ktx:22.1.2")
@@ -118,9 +118,13 @@ dependencies {
     // Testing
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     testImplementation("io.kotlintest:kotlintest:2.0.7")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
+    androidTestImplementation("org.robolectric:robolectric:4.9")
+    androidTestImplementation("io.mockk:mockk-android:1.13.8")
+
+    // Timber
+    api("com.jakewharton.timber:timber:4.7.1")
 }

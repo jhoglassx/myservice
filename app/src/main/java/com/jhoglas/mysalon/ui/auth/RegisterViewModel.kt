@@ -1,6 +1,5 @@
 package com.jhoglas.mysalon.ui.auth
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.concurrent.CancellationException
 import javax.inject.Inject
 
@@ -26,7 +26,7 @@ class RegisterViewModel @Inject constructor(
     val emailState = mutableStateOf(ScreenState())
     val passwordState = mutableStateOf(ScreenState())
     val nameState = mutableStateOf(ScreenState())
-    private val policyState = mutableStateOf(ScreenState())
+    val policyState = mutableStateOf(ScreenState())
 
     fun nameChange(value: String) {
         nameState.value = nameState.value.copy(content = value)
@@ -58,11 +58,11 @@ class RegisterViewModel @Inject constructor(
         val passwordResult = Validator.validatePassword(passwordState.value.content.toString())
         val privacyPolicyResult = Validator.validatePrivacyPolicyAcceptance(policyState.value.content is Boolean)
 
-        Log.d(TAG, "ValidateFields:")
-        Log.d(TAG, "firstNameResult = $firstNameResult")
-        Log.d(TAG, "emailResult = $emailResult")
-        Log.d(TAG, "passwordResult = $passwordResult")
-        Log.d(TAG, "privacyPolicyResult = $privacyPolicyResult")
+        Timber.tag(TAG).d("ValidateFields:")
+        Timber.tag(TAG).d("firstNameResult = $firstNameResult")
+        Timber.tag(TAG).d("emailResult = $emailResult")
+        Timber.tag(TAG).d("passwordResult = $passwordResult")
+        Timber.tag(TAG).d("privacyPolicyResult = $privacyPolicyResult")
 
         nameState.value = nameState.value.copy(
             state = if (firstNameResult.status) State.SUCCESS else State.ERROR,
@@ -101,15 +101,16 @@ class RegisterViewModel @Inject constructor(
                         state = if (it) State.SUCCESS else State.ERROR,
                         message = state.toString()
                     )
+                    Timber.tag(TAG).d("registerUserInFirebase Success = $_registerState")
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                Log.d("Error register", "Firebase register error: ${e.message}")
                 if (e is CancellationException) throw e else null
                 _registerState.value = ScreenState(
                     state = State.ERROR,
                     message = e.message ?: "Error"
                 )
+                Timber.tag(TAG).e("registerUserInFirebase Error = $e")
             }
         }
     }
