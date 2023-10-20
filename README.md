@@ -33,7 +33,16 @@ This project is under the MIT License. Refer to the `LICENSE` file for more deta
 
 ## Screenshots
 
-(Optional - include screenshots of your application for demonstration.)
+![image](https://github.com/jhoglassx/myservice/assets/88597192/73f010fa-069d-45cc-9553-34992546ecce)
+![image](https://github.com/jhoglassx/myservice/assets/88597192/bed82de7-1ce3-48b7-9611-e0a68bf66d4e)
+![image](https://github.com/jhoglassx/myservice/assets/88597192/f4d6c231-76bd-4090-9087-225783cfe8b1)
+![image](https://github.com/jhoglassx/myservice/assets/88597192/e0ae9e15-1c34-4eb9-9b3c-1dd69e773f02)
+![image](https://github.com/jhoglassx/myservice/assets/88597192/dfa19802-7e12-4420-9b18-0f68a3769c56)
+
+
+
+
+
 
 ## Roadmap
 
