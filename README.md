@@ -39,4 +39,3 @@ This project is under the MIT License. Refer to the `LICENSE` file for more deta
 
 - Login with Google using Firebase
 - Login with email+password using Firebase
-- 
