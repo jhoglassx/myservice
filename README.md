@@ -39,12 +39,15 @@ This project is under the MIT License. Refer to the `LICENSE` file for more deta
 <img src="https://github.com/jhoglassx/myservice/assets/88597192/e0ae9e15-1c34-4eb9-9b3c-1dd69e773f02" width="200" />
 <img src="https://github.com/jhoglassx/myservice/assets/88597192/dfa19802-7e12-4420-9b18-0f68a3769c56" width="200" />
 
-
-
-
-
-
 ## Roadmap
 
-- Login with Google using Firebase
-- Login with email+password using Firebase
+- Login with Google using Firebase - `implemented`
+- Login with email+password using Firebase - implemented
+- Logout - implemented
+- Home screen with the list of companies - Implemsdented
+- Establishment screen and scheduling screen - implemented
+- Navigation Drawer with details of user and menu - implemented
+- Create a Screen to add companies and save the database - not implemented
+- Create a Screen to add professionals to companies - not implemented
+- Load companies with details for the Home screen - not implemented
+- Load company with details for the Establishment screen - not implemented
