@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import org.jetbrains.annotations.VisibleForTesting
+import timber.log.Timber
 import java.util.Date
 import java.util.concurrent.CancellationException
 import javax.inject.Inject
@@ -47,9 +48,10 @@ class AuthClientUseCaseImpl @Inject constructor(
                 buildSignInRequest()
             ).await()
         } catch (e: Exception) {
+            Timber.tag("AuthClientUseCaseImpl").e("loginWithGoogle Error: %s", e.message)
             if (e is CancellationException) throw e else null
         }
-
+        Timber.tag("AuthClientUseCaseImpl").d("loginWithGoogle Success: %s", result)
         return result?.pendingIntent?.intentSender
     }
 
