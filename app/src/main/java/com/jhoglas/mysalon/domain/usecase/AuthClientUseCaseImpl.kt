@@ -21,7 +21,6 @@ import com.jhoglas.mysalon.ui.navigation.Screen
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
-import org.jetbrains.annotations.VisibleForTesting
 import timber.log.Timber
 import java.util.Date
 import java.util.concurrent.CancellationException
@@ -151,7 +150,4 @@ class AuthClientUseCaseImpl @Inject constructor(
             emit(it.toDomain())
         }
     }
-
-    @VisibleForTesting
-    fun buildSignInRequestTest() = buildSignInRequest()
 }

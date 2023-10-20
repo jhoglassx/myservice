@@ -3,6 +3,7 @@ package com.jhoglas.mysalon.data.remote
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class AuthDataSourceImpl @Inject constructor(
@@ -18,9 +19,7 @@ class AuthDataSourceImpl @Inject constructor(
     }
 
     override suspend fun getUser(userId: String): Flow<UserRemoteEntity> = flow {
-        val databaseReference = database.getReference("accounts").child(userId)
-
-        val data = databaseReference.get().result
+        val data = database.getReference("accounts").child(userId).get().await()
 
         emit(
             UserRemoteEntity(

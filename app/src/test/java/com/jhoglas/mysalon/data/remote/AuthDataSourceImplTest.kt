@@ -10,6 +10,7 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
@@ -96,8 +97,9 @@ class AuthDataSourceImplTest {
 
     @Test
     fun `getUser successfully`() = runTest {
-        every { mockDatabase.getReference("accounts") } returns mockDatabaseReference
-        every { mockDatabaseReference.child(any()) } returns mockDatabaseReference
+        coEvery {
+            mockDatabase.getReference("accounts").get().await()
+        } returns mockDataSnapshot
 
         val taskSlot = slot<OnCompleteListener<DataSnapshot>>()
 
@@ -122,8 +124,10 @@ class AuthDataSourceImplTest {
 
     @Test
     fun `getUser unsuccessfully`() = runTest {
-        every { mockDatabase.getReference("accounts") } returns mockDatabaseReference
-        every { mockDatabaseReference.child(any()) } returns mockDatabaseReference
+        coEvery {
+            mockDatabase.getReference("accounts").get().await()
+        } returns mockDataSnapshot
+
         val taskSlot = slot<OnCompleteListener<DataSnapshot>>()
 
         val mockTask: Task<DataSnapshot> = mockk {

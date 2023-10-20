@@ -74,7 +74,7 @@ class LoginViewModel @Inject constructor(
         _allValidationsPassed.value = emailResult.status && passwordResult.status
     }
 
-    fun setUserData() {
+    fun getUserData() {
         viewModelScope.launch {
             try {
                 authClientUseCase.getSignedInUser().collect { user ->
@@ -82,12 +82,12 @@ class LoginViewModel @Inject constructor(
                 }
                 Timber.tag(TAG).d("setUserData: Success ${_userDataState.value}")
             } catch (e: Exception) {
+                Timber.tag(TAG).e("setUserData: Error $e")
                 e.printStackTrace()
                 _loginState.value = ScreenState(
                     state = State.ERROR,
                     message = e.message ?: "Error"
                 )
-                Timber.tag(TAG).e("setUserData: Error $e")
             }
         }
     }

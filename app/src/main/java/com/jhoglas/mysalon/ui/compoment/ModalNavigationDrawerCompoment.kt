@@ -64,7 +64,7 @@ fun NavigationDrawerComponent(
         mutableIntStateOf(0)
     }
 
-    loginViewModel.setUserData()
+    loginViewModel.getUserData()
 
     ModalNavigationDrawer(
         drawerState = scaffoldState,

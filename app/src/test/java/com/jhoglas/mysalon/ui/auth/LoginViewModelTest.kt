@@ -145,7 +145,7 @@ class LoginViewModelTest {
             authClientUseCaseMock.getSignedInUser()
         } returns flowOf(user)
 
-        viewModel.setUserData()
+        viewModel.getUserData()
 
         viewModel.userDataState.value shouldBe user
         coVerify(exactly = 1) { authClientUseCaseMock.getSignedInUser() }
@@ -157,7 +157,7 @@ class LoginViewModelTest {
             authClientUseCaseMock.getSignedInUser()
         } throws Exception("Error")
 
-        viewModel.setUserData()
+        viewModel.getUserData()
 
         viewModel.loginState.value shouldBe ScreenState(content = null, state = State.ERROR, message = "Error")
         coVerify(exactly = 1) { authClientUseCaseMock.getSignedInUser() }
