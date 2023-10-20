@@ -7,7 +7,8 @@ Brief project description.
 - Language: Kotlin
 - Architecture: MVVM (Model-View-ViewModel)
 - Dependency Injection Library: Dagger Hilt
-- Database: (Optional - include here if you are using any database)
+- Database:
+  - Firebase
 
 ## Architecture
 
@@ -36,4 +37,6 @@ This project is under the MIT License. Refer to the `LICENSE` file for more deta
 
 ## Roadmap
 
-Describe upcoming steps and planned features for the project, if applicable.
+- Login with Google using Firebase
+- Login with email+password using Firebase
+- 
